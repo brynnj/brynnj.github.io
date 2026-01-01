@@ -1,0 +1,151 @@
+:root {
+  --bg: #f8f6f1;
+  --ink: #1c1b17;
+  --muted: #6a6257;
+  --accent: #2d5b5f;
+  --card: #ffffff;
+  --border: #e6e0d6;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: "Literata", "Georgia", "Times New Roman", serif;
+  line-height: 1.65;
+}
+
+a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+.wrap {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.site-header {
+  border-bottom: 1px solid var(--border);
+  padding: 24px 0;
+}
+
+.site-title {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.site-nav {
+  margin-top: 10px;
+  display: flex;
+  gap: 16px;
+  font-size: 15px;
+}
+
+.content {
+  padding: 40px 0 64px;
+}
+
+h1, h2, h3 {
+  line-height: 1.2;
+}
+
+.lead {
+  font-size: 20px;
+  color: var(--muted);
+  max-width: 42rem;
+}
+
+.project-list {
+  list-style: none;
+  padding: 0;
+  margin: 28px 0 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+}
+
+.project-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px;
+  display: grid;
+  gap: 12px;
+}
+
+.project-thumb {
+  display: block;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+
+.project-thumb img {
+  display: block;
+  width: 100%;
+  height: 170px;
+  object-fit: cover;
+}
+
+.project-meta {
+  display: grid;
+  gap: 6px;
+}
+
+.project-card h3 {
+  margin: 0 0 6px;
+  font-size: 18px;
+}
+
+.project-card p {
+  margin: 0;
+  color: var(--muted);
+}
+
+.project-year {
+  font-size: 13px;
+  color: var(--muted);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.project figure {
+  margin: 28px 0;
+}
+
+.project img {
+  width: 100%;
+  height: auto;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+}
+
+.project figcaption {
+  color: var(--muted);
+  font-size: 14px;
+  margin-top: 8px;
+}
+
+.site-footer {
+  border-top: 1px solid var(--border);
+  padding: 20px 0 32px;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+@media (max-width: 600px) {
+  .site-nav {
+    flex-wrap: wrap;
+  }
+}

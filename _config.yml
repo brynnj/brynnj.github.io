@@ -1,0 +1,7 @@
+title: "Brynn J"
+description: "Personal site"
+url: ""
+baseurl: ""
+markdown: kramdown
+permalink: pretty
+theme: null
