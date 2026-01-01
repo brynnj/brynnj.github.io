@@ -46,11 +46,6 @@ reconciles positions and submits market orders through Alpaca.
   </figcaption>
 </figure>
 
-## How to run / reproduce
-1. Configure Alpaca credentials for paper trading.
-2. Run the strategy via the registry runner with the rebalance action.
-3. Inspect performance CSVs and logs saved in the strategy output directory.
-
 ## Limitations
 - Results are not yet backed by a full, reproducible backtest report.
 - Optimization is sensitive to lookback window and asset universe choices.

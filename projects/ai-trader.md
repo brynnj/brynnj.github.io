@@ -58,13 +58,6 @@ Over the full tested timeframe, this bot actually did significantly outperform t
   </figcaption>
 </figure>
 
-## How to run / reproduce
-1. Configure API keys and broker credentials (OpenAI + exchange).
-2. Run the hourly cycle script or invoke the strategy runner from the project
-   root.
-3. Review logs and performance artifacts written to the strategy output
-   directory.
-
 ## Limitations
 - Evaluation is still limited; needs a consistent backtest or replay harness.
 - LLM decisions are sensitive to prompt context and market regime changes.
