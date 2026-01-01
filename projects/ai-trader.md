@@ -12,13 +12,16 @@ ETH perpetuals, with strict schema enforcement, guardrails, and a broker
 abstraction layer for execution.
 
 ## Problem
-Manual crypto trading is time-consuming and inconsistent. I wanted a system
-that can summarize multi-timeframe market context, produce repeatable decisions,
-and only trade when the signal is strong.
+Ethereum and some of the other relatively liquid but volatile coins out there seem to have patterns that an experienced discretionary trader could exploit. However, a person can't watch the markets 24/7. I wanted to see if I could get an LLM to take in 
+multi-timeframe market context and news, and produce decisions with more nuanced reasoning than what a simple rules-based or ML system could do.
+
+Obviously I didn't expect an LLM to magically predict price - the art is in how market context is provided and the prompting language, both of which need some work in my current revision. One could argue that at that point you might as well just train a model or build an RL system with the same feature set - I would agree, and this is my next project. This project was just for fun, but actually had surprisingly good results given the relatively simple implementation I tried.
+
+I opted to trade on ETH perp futures - liquid enough to have small slippage, volatile enough to make significant gains, hopefully not a perfectly efficient market given large retail participation, but most importantly had a promotion on coinbase where fees were negligibly small so I could test this without burning too much money.
 
 ## Approach / Architecture
 The system is split into data collection, LLM decisioning, safety validation,
-and broker execution, with a scheduler coordinating hourly cycles. The design
+and broker execution, with a scheduler coordinating half-hourly cycles. The design
 keeps the LLM isolated behind strict output schemas and a safety layer before
 any order is placed.
 
@@ -35,9 +38,10 @@ any order is placed.
   enforcement.
 
 ## Results
-- Placeholder: add live or simulated metrics (trade count, win rate, PnL,
-  drawdown).
-- Placeholder: include a short comparison vs a baseline (buy-and-hold or flat).
+- Unsurprisingly, this still ends up either falling into a trend-following or mean-reversion biased approach depending on prompt wording, and as such bleeds a bit too much when in the wrong regime. I initially paper traded this in a strong momentum regime, and my prompting was always biased towards momentum, so it did exceptionally well. When I went in with real money, ETH started going mostly sideways with lots of false breakouts. I was just under breakeven for months, but some recent volatility started losing a concerning amount of money so I've disabled it for now.
+
+Over the full tested timeframe, this bot actually did significantly outperform the underlying asset. It stayed out in the major downtrends. I think there is actually potential here if I can expand the feature set to enable better regime classification. I also think adding a "reinforcement" element would go a long way - if I can find a way to concisely provide recent trade performance alongside market context, I think the LLM could infer regimes accordingly.
+
 
 <figure>
   <img src="/assets/img/ai-trader-flow.png" alt="AI Trader system flow diagram">
