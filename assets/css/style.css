@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap");
 
 :root {
   --bg: #0b0f14;
@@ -20,7 +20,7 @@ body {
   margin: 0;
   min-height: 100vh;
   color: var(--ink);
-  font-family: "Space Grotesk", "Segoe UI", sans-serif;
+  font-family: "Sora", "Segoe UI", sans-serif;
   line-height: 1.65;
   background:
     radial-gradient(1200px 600px at 10% -10%, rgba(77, 212, 255, 0.12), transparent 55%),
@@ -160,7 +160,7 @@ ul {
   color: var(--muted);
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  font-family: "Space Mono", "Consolas", monospace;
+  font-family: "IBM Plex Mono", "Consolas", monospace;
 }
 
 .project {
