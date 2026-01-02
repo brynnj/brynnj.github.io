@@ -21,7 +21,7 @@ Ethereum, and a handful of other crypto assets, sit in an interesting middle gro
 - volatile enough that there’s something to trade,
 - and still heavily driven by retail participation and sentiment.
 
-Just by observation of a price history and anecdotal experience from others I've talked to, crypto exhibits very clean tradeable momentum at time that a human could likely capitalize on given broader market context, if they could sit at a computer 24/7.
+Just by observation of the price history and anecdotal experience from others I've talked to, ETH exhibits very clean tradeable momentum at time that a human could likely capitalize on given broader market context, if they could sit at a computer 24/7. (TODO INSERT AN ACTUAL RUNS TEST OR SIMILAR SHOWING IT ISN'T RANDOM WALK)
 
 I wasn’t expecting an LLM to predict price. The experiment was more about whether it could reason when given good context and behave more like a discretionary trader than a fixed rule set.
 
