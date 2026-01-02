@@ -223,4 +223,4 @@ Some possible uses that seem consistent with the behavior above:
 
 ## Next Steps
 
-There's probably a lot more that could be done than a purely price-action based 
+I really barely scratched the surface of the predictive model - this was my first try at feature set, model selection, training approach, etc. and I might be able to get significantly better labels if I work more at this (especially including features that aren't just price and volume action, news and sentiment would probably go a long way). I first want to see if I can find an application for this in a metalabeler or otherwise, and if so I may revisit this to see how far I can push it.
