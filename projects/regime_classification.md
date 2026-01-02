@@ -1,6 +1,6 @@
 ---
 layout: project
-title: "Regime Labeling Experiments"
+title: "Regime Labeling"
 description: "Exploring regime labels, conviction scores, and their relationship to forward returns."
 ---
 
@@ -22,6 +22,8 @@ in future returns.
 
 For regime definitions, I didn't invent a custom labeling scheme. I used the
 Amplitude-Based Labeler from Jonathan Shore's `tseries_patterns` library.
+
+(As an aside, all of the content at tr8dr has been very inspiring. The possibility of starting from a good labeler to build a predictive model came from https://tr8dr.github.io/RLp1/)
 
 This labeler segments price into three broad states based on realized movement:
 - sustained upward moves,
