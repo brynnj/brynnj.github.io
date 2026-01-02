@@ -33,7 +33,8 @@ This labeler segments price into three broad states based on realized movement:
 ![Example of labeled data:](/assets/img/btc_labeled.png)
 
 The forward (ex. 24 bar) returns of the labeled dataset show significant predictive power (this is forward looking though of course)
-```
+
+```shell
 H=24 bars
            n      mean       std  win_rate    median
 label
