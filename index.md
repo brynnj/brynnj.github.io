@@ -5,6 +5,13 @@ title: "Home"
 
 # James Brynn
 
+<div class="resume-layout">
+  <aside class="flow-panel" aria-hidden="true">
+    <div class="flow-noise"></div>
+    <div class="flow-lines"></div>
+  </aside>
+  <div class="resume-content" markdown="1">
+
 <p class="lead">
   Aerospace engineer focused on multibody dynamics, with a side interest in trading, simulation, and keeping up with modern tools so I don't get replaced.
 
@@ -24,3 +31,5 @@ Disclaimer - many of these projects are not "successful", and the things that ac
 - Computer science minor.
 - Baja SAE competitor 3x, primarily on drivetrain.
 
+  </div>
+</div>
