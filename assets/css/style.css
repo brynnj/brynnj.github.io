@@ -33,14 +33,11 @@ body {
     linear-gradient(180deg, var(--bg), var(--bg-2));
 }
 
-/* ======================================================
-   Subtle animated flow field (primary ambient motion)
-   ====================================================== */
 body::before {
   content: "";
   position: fixed;
-  inset: -20%;
-  z-index: 0;
+  inset: -25%;
+  z-index: -2;
   pointer-events: none;
 
   background:
@@ -60,22 +57,17 @@ body::before {
       transparent 75%
     );
 
-  filter: blur(60px);
-  transform: translateZ(0);
+  background-size: 140% 140%;
+  background-position: 0% 0%;
+  filter: blur(80px);
 
-  animation: flowField 160s ease-in-out infinite alternate;
+  animation: flowFieldPos 180s ease-in-out infinite alternate;
 }
 
-@keyframes flowField {
-  0% {
-    transform: translate3d(-2%, -1%, 0) scale(1.05);
-  }
-  50% {
-    transform: translate3d(1%, 2%, 0) scale(1.1);
-  }
-  100% {
-    transform: translate3d(-1%, 1%, 0) scale(1.08);
-  }
+@keyframes flowFieldPos {
+  0%   { background-position: 0% 0%; }
+  50%  { background-position: 60% 40%; }
+  100% { background-position: 20% 70%; }
 }
 
 /* ======================================================
@@ -89,8 +81,8 @@ body::after {
   z-index: 1;
 
   background-image:
-    linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+    linear-gradient(rgba(255, 255, 255, 0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.07) 1px, transparent 1px);
 
   background-size: 48px 48px;
   opacity: 0.18;
