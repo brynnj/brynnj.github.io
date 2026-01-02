@@ -5,15 +5,12 @@ title: "Projects"
 
 # Projects
 
-Below are recent highlights. Update `_data/projects.yml` to add, remove, or
-reorder entries.
-
 <ul class="project-list">
   {% for project in site.data.projects %}
     <li class="project-card">
       {% if project.image and project.image != "" %}
         <a class="project-thumb" href="{{ project.link }}">
-          <img src="{{ project.image }}" alt="{{ project.title }} preview">
+          <img src="{{ project.image }}" alt="{{ project.title }}">
         </a>
       {% endif %}
       <div class="project-meta">

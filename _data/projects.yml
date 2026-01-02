@@ -22,7 +22,7 @@
   description: "Exploring regime labels, conviction scores, and their link to forward returns."
   link: "/projects/regime_classification/"
   year: "2025"
-  image: "/assets/img/scatter_trend_score_vs_fwd_ret_6.png"
+  image: "/assets/img/binned_mean_fwd_abs_ret_vs_trend_score.png"
 - title: "Min Variance Optimized Portfolio"
   description: "A downside-variance-optimized portfolio with weekly rebalances."
   link: "/projects/risk-parity/"

@@ -7,10 +7,8 @@ description: "Exploring regime labels, conviction scores, and their relationship
 # Regime Labeling Experiments
 
 I've been thinking about regime labeling as a filter on trade entries for a
-long time. Almost every strategy I've worked on eventually assumes one of two
-things: that the market is trending, or that it's mean-reverting. When
-strategies struggle, it often feels less like the entry logic is broken and
-more like it's being applied in the wrong kind of market.
+long time. Everything seems to eventually assume trending mean-reverting. When
+strategies struggle, it often feels like the removing bad entries when in the wrong market is all that's needed.
 
 This part of the project is an attempt to explore that idea more directly.
 Instead of trying to trade regimes outright, the goal here was to see whether
