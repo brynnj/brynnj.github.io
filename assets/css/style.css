@@ -185,66 +185,6 @@ ul {
   margin-top: 10px;
 }
 
-.resume-layout {
-  display: grid;
-  grid-template-columns: minmax(180px, 230px) minmax(0, 1fr);
-  gap: 32px;
-  align-items: start;
-}
-
-.flow-panel {
-  position: relative;
-  min-height: 520px;
-  border-radius: 18px;
-  border: 1px solid var(--border);
-  background: linear-gradient(180deg, #0f1115, #1b1d22);
-  overflow: hidden;
-  box-shadow: 0 18px 38px var(--shadow);
-  isolation: isolate;
-}
-
-.flow-panel::before {
-  content: "";
-  position: absolute;
-  inset: -30%;
-  background-image:
-    radial-gradient(circle at 20% 15%, rgba(255, 255, 255, 0.28), transparent 45%),
-    radial-gradient(circle at 80% 10%, rgba(210, 210, 210, 0.22), transparent 52%),
-    radial-gradient(circle at 30% 70%, rgba(255, 255, 255, 0.16), transparent 55%),
-    radial-gradient(circle at 65% 80%, rgba(255, 140, 190, 0.28), transparent 48%);
-  animation: flow-drift 14s linear infinite;
-  opacity: 0.75;
-}
-
-.flow-noise {
-  position: absolute;
-  inset: 0;
-  background-image:
-    linear-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.08) 1px, transparent 1px);
-  background-size: 12px 12px;
-  opacity: 0.4;
-  mix-blend-mode: soft-light;
-  animation: pixel-shift 6s steps(6) infinite;
-}
-
-.flow-lines {
-  position: absolute;
-  inset: -10% 0;
-  background-image:
-    linear-gradient(180deg, transparent 0%, rgba(255, 255, 255, 0.22) 45%, transparent 70%),
-    linear-gradient(180deg, transparent 0%, rgba(255, 140, 190, 0.35) 52%, transparent 78%),
-    linear-gradient(180deg, transparent 0%, rgba(77, 212, 255, 0.18) 40%, transparent 70%);
-  background-size: 100% 180%, 100% 160%, 100% 200%;
-  background-position: 0 0, 0 30%, 0 60%;
-  opacity: 0.8;
-  animation: flow-lines 9s ease-in-out infinite;
-}
-
-.resume-content {
-  min-width: 0;
-}
-
 .resume-embed {
   margin-top: 24px;
   border-radius: 14px;
@@ -269,51 +209,7 @@ ul {
     flex-wrap: wrap;
   }
 
-  .resume-layout {
-    grid-template-columns: 1fr;
-  }
-
-  .flow-panel {
-    min-height: 220px;
-  }
-
   .resume-embed object {
     height: 70vh;
-  }
-}
-
-@keyframes flow-drift {
-  0% {
-    transform: translate3d(-6%, -4%, 0) rotate(0deg);
-  }
-  50% {
-    transform: translate3d(6%, 4%, 0) rotate(2deg);
-  }
-  100% {
-    transform: translate3d(-6%, -4%, 0) rotate(0deg);
-  }
-}
-
-@keyframes pixel-shift {
-  0% {
-    background-position: 0 0, 0 0;
-  }
-  50% {
-    background-position: 6px -6px, -6px 6px;
-  }
-  100% {
-    background-position: 0 0, 0 0;
-  }
-}
-
-@keyframes flow-lines {
-  0% {
-    transform: translateY(-6%);
-  }
-  50% {
-    transform: translateY(6%);
-  }
-  100% {
-    transform: translateY(-6%);
   }
 }
