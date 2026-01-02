@@ -30,17 +30,22 @@ This labeler segments price into three broad states based on realized movement:
 - sustained downward moves,
 - and periods of chop / no meaningful direction.
 
-The important thing is that these regimes are defined by price actually moving,
-not by indicators crossing thresholds. That makes the labels persistent by
-construction, and much closer to how a discretionary trader might describe the
-tape in hindsight.
+![Example of labeled data:](/assets/img/btc_labeled.png)
+
+The forward (ex. 24 bar) returns of the labeled dataset show significant predictive power (this is forward looking though of course)
+```
+H=24 bars
+           n      mean       std  win_rate    median
+label
+-1      6397 -0.033619  0.177416  0.337033 -0.012761
+ 0     16292  0.003378  0.084168  0.524122  0.000976
+ 1      7844  0.021708  0.086135  0.691229  0.013007
+```
 
 A few caveats up front:
 - The labels are forward-looking and non-causal.
 - They're not meant to be traded directly.
-- I'm using them as a reference frame, not as an objective truth.
-
-They're best thought of as "the moves that mattered, ex-post."
+- I'm using them as a truth label in my training data.
 
 ---
 
