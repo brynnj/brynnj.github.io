@@ -24,7 +24,7 @@ The portfolio is built around two roles:
 2. **Protection / diversifiers**  
    Assets that perform better in sideways or risk-off regimes, or that are meaningfully uncorrelated (or inversely correlated) with the growth sleeve.
 
-The intent was a correlation matrix where the growth vehicles are as uncorrelated as possible, with sufficient inverse correlation to be protected against heavy drawdowns. I ended up selecting TQQQ and UGL for growth, and VXZ, SVXY, and RWM for protection.
+The intent was a correlation matrix where the growth vehicles are as uncorrelated as possible, with sufficient inverse correlation to be protected against heavy drawdowns. I ended up selecting TQQQ and UGL for growth, SVXY for a weaker but also low correlation growth, and VXZ and RWM for inverse correlation.
 
 (You’ll see EDZ instead of RWM in the backtests and the matrix below — I swapped in RWM for EDZ in live testing because I decided EDZ’s backtest performance was only good by chance in the 2022 bear market, and RWM should fill the same role with higher returns in general. The correlation with the rest of the assets is very similar to EDZ.)
 
