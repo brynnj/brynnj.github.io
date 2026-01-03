@@ -20,12 +20,11 @@ in future returns.
 
 ## Regime labels as a reference
 
-For regime definitions, I didn't invent a custom labeling scheme. I used the
-Amplitude-Based Labeler from Jonathan Shore's `tseries_patterns` library.
+For regime labeling I used the Amplitude-Based Labeler from Jonathan Shore's `tseries_patterns` library.
 
-(As an aside, all of the content at tr8dr has been very inspiring. The possibility of starting from a good labeler to build a predictive model came from https://tr8dr.github.io/RLp1/)
+(As an aside, all of the content on tr8dr has been very inspiring. The possibility of starting from a good labeler to build a predictive model came from https://tr8dr.github.io/RLp1/)
 
-This labeler segments price into three states, generally uptrend downtrend and flat. The labels are forward-looking and non-causal, they're not meant to be traded directly, but I'm using them as a truth label in my training data.
+This labeler identifies three states, generally uptrend downtrend and flat. The labels are forward-looking and non-causal, they're not meant to be traded directly, but I'm using them as a truth label in my training data.
 - `+1` for upward regimes,
 - `-1` for downward regimes,
 - `0` for neutral / choppy periods.
@@ -34,7 +33,7 @@ Example of labeled data:
 
 ![Example of labeled data:](/assets/img/btc_labeled.png)
 
-The forward (ex. 24 bar) returns of the labeled dataset show significant predictive power (this is forward looking though of course)
+As a simple assessment of the validity of the regime label, the 24 bar forward returns of the labeled dataset show significant predictive power (this is forward looking though of course)
 
 ```shell
 H=24 bars
@@ -43,6 +42,15 @@ label
 -1      6397 -0.033619  0.177416  0.337033 -0.012761
  0     16292  0.003378  0.084168  0.524122  0.000976
  1      7844  0.021708  0.086135  0.691229  0.013007
+```
+
+There's also good persistence within the regimes, so there would be some useful, tradeable information if we could predict the labels accurately.
+```shell
+=== Empirical transition matrix (P[next_label | label]) ===
+          to_-1    to_0    to_1
+from_-1  0.9023  0.0592  0.0385
+from_0   0.0234  0.9512  0.0254
+from_1   0.0308  0.0531  0.9162
 ```
 ---
 

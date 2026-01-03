@@ -25,6 +25,6 @@
   image: "/assets/img/btc_labeled_cover.png"
 - title: "Min Variance Optimized Portfolio"
   description: "A downside-variance-optimized portfolio with weekly rebalances."
-  link: "/projects/risk-parity/"
+  link: "/projects/min-variance/"
   year: "2024"
-  image: "/assets/img/risk-parity-weights.png"
+  image: "/assets/img/correlation-matrix.png"
