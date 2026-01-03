@@ -28,6 +28,7 @@ The intent was a correlation matrix where the growth vehicles are as uncorrelate
 
 (You’ll see EDZ instead of RWM in the backtests and the matrix below — I swapped in RWM for EDZ in live testing because I decided EDZ’s backtest performance was only good by chance in the 2022 bear market, and RWM should fill the same role with higher returns in general. The correlation with the rest of the assets is very similar to EDZ.)
 
+**Correlation Matrix**  
 ![Correlation:](/assets/img/correlation-matrix.png)
 
 ---
@@ -99,29 +100,33 @@ Performance does not appear to be especially sensitive to the exact optimization
 A few high-level observations:
 - Live behavior has stayed within the family of backtest outcomes, despite some differences in constraint logic.
 - The portfolio underperformed pure tech and gold over the most recent period, which isn’t surprising given how strong those assets were individually.
-- Drawdowns were materially smaller than most single-asset alternatives.
-
-That tradeoff — smoother equity at the cost of lagging during extreme single-asset runs — is consistent with the intent of the strategy.
 
 You’ll notice the optimization problem isn’t doing much in the way of dynamically changing weights. Within the limits set on risk-on vs hedging asset classes, it tends to pick fairly constant ratios aside from a few events. As mentioned above, this could probably be implemented as a fixed-weight portfolio.
 
-**[Figure: Rolling portfolio weights in live testing]**  
+**Rolling portfolio weights in live testing**  
 ![Weights:](/assets/img/weight-allocations.png)
 
-**[Figure: Portfolio equity curve in live testing]**
+**Portfolio equity curve in live testing**
 ![Weights:](/assets/img/cumulative-returns.png)
 
-The unusual relationship between tech and gold recently (both growing astronomically) led to more correlation and a higher drawdown than I’d like in recent months.
+**Drawdown in live testing**  
+![Live test drawdown:](/assets/img/drawdown_live.png)
+
+The unusual relationship between tech and gold recently (both growing astronomically) led to more correlation and a higher drawdown than I’d like in recent months, but still in-family relative to backtesting.
 
 As for backtests, I got rate-limited by yfinance after pulling too much data in a single day and need to fix my backtesting pipeline. I do have an example with generally similar allocations over time, although with much looser bounds (you’ll see much wider swings in allocations).
 
 I also included a rough tax model of ~10% annual tax on gains, but I haven’t yet determined the correct realized tax burden. The cumulative value shown does **not** have taxes subtracted. As noted above in the correlation matrix, the backtests use EDZ, but I substituted RWM for live testing.
 
-**[Figure: Rolling portfolio weights in backtesting]**  
+**Rolling portfolio weights in backtesting**  
 ![Backtest Weights:](/assets/img/allocations-backtest.png)
 
-**[Figure: Portfolio equity curve in backtesting]**  
+**Portfolio equity curve in backtesting**  
 ![Backtest Performance:](/assets/img/risk-parity-performance-backtest.png)
+
+Drawdowns reached around 12%, higher than anything seen so far in live
+**Drawdown in backtesting**  
+![Backtest Drawdown:](/assets/img/drawdowns-backtest.png)
 
 ---
 
