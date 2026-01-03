@@ -109,6 +109,7 @@ You’ll notice the optimization problem isn’t doing much in the way of dynami
 ![Weights:](/assets/img/weight-allocations.png)
 
 **[Figure: Portfolio equity curve in live testing]**
+![Weights:](/assets/img/cumulative-returns.png)
 
 The unusual relationship between tech and gold recently (both growing astronomically) led to more correlation and a higher drawdown than I’d like in recent months.
 
