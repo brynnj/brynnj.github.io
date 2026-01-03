@@ -1,23 +1,28 @@
+# Set hidden: true to hide a project card from the Projects page.
 - title: "AI Trader - Making ChatGPT Do Discretionary Trading"
   description: "A crypto trading system using an LLM."
   link: "/projects/ai-trader/"
   year: "2025"
   image: "/assets/img/ai-trader-flow.png"
+  hidden: true
 - title: "Strategy Lab: LLM-Driven Strategy Evolver"
   description: "A local LLM loop that proposes, runs, and scores unconventional strategies."
   link: "/projects/strategy-lab/"
   year: "2025"
   image: "/assets/img/strategy-lab.png"
+  hidden: true
 - title: "Algorithmic Trading Platform"
   description: "A modular, event-driven trading platform with async streams, backtests, and a real-time UI."
   link: "/projects/trading-platform/"
   year: "2025"
   image: "/assets/img/trading-platform-architecture.png"
+  hidden: true
 - title: "6-DOF Rigid Body Simulator + Web Viewer"
   description: "A Python 6-DOF simulator with exportable outputs and a Babylon.js playback tool."
   link: "/projects/sixdof-sim/"
   year: "2025"
   image: "/assets/img/sixdof-sim-viewer.png"
+  hidden: true
 - title: "Regime Labeling Experiments"
   description: "Exploring regime labels, conviction scores, and their link to forward returns."
   link: "/projects/regime-classification/"
