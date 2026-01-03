@@ -24,7 +24,7 @@ For regime labeling I used the Amplitude-Based Labeler from Jonathan Shore's `ts
 
 (As an aside, all of the content on tr8dr has been very inspiring. The possibility of starting from a good labeler to build a predictive model came from https://tr8dr.github.io/RLp1/)
 
-This labeler identifies three states, generally uptrend downtrend and flat. The labels are forward-looking and non-causal, they're not meant to be traded directly, but I'm using them as a truth label in my training data.
+This labeler identifies three states, generally uptrend downtrend and flat. The labels are forward-looking, they're not meant to be traded directly, but I'm using them as a truth label in my training data.
 - `+1` for upward regimes,
 - `-1` for downward regimes,
 - `0` for neutral / choppy periods.
