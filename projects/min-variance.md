@@ -32,7 +32,7 @@ The intent was a correlation matrix where the growth vehicles are as uncorrelate
 
 ---
 
-## Inspiration & Adaptation
+## Inspiration
 
 The initial idea for this project was inspired by a QuantConnect research post on risk parity with leveraged ETFs:
 
@@ -40,18 +40,13 @@ https://www.quantconnect.com/research/17879/a-risk-parity-approach-to-leveraged-
 
 That work helped frame the core concept of combining growth-oriented assets with defensive components so that portfolio-level risk, rather than individual asset volatility, becomes the design target.
 
-From there, I diverged in several ways:
-- the asset universe was adjusted to emphasize orthogonality and regime diversity rather than symmetry,
-- the optimization objective was shifted toward **downside variance** instead of total variance,
-- and additional hard constraints were introduced to control sleeve exposure and prevent concentration.
-
-The result is less of a textbook risk-parity implementation and more of a practical, constraint-driven portfolio that fits into a live trading workflow.
+I ended up swapping out/removing some assets, and shifted the optimization objective a bit.
 
 ---
 
 ## Strategy Structure
 
-The strategy runs on a **weekly rebalance cycle** and produces target portfolio weights subject to strict constraints.
+The strategy runs on a **weekly rebalance cycle** and produces target portfolio weights by solving a constrained optimization problem on downside variance.
 
 At a high level:
 1. Pull historical data for the asset universe.
@@ -153,8 +148,6 @@ The live (paper) instance runs on an AWS EC2 machine alongside other experiments
 ---
 
 ## Next Steps
-
-The immediate next steps are mostly practical:
 
 1. **Fix the backtesting pipeline**  
    The current setup relied too heavily on yfinance, and I was restricted after pulling too much data on a different project. I need to port this to a more robust data provider. I also want to explicitly test this optimization problem against others — the original version of this project was risk parity, which is what the backtest shown uses, and I’d like to see whether that actually performed better over the live testing period. I also need to test explicitly with the RWM substitution for EDZ.
