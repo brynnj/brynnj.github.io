@@ -116,7 +116,7 @@ The unusual relationship between tech and gold recently (both growing astronomic
 
 As for backtests, I got rate-limited by yfinance after pulling too much data in a single day and need to fix my backtesting pipeline. I do have an example with generally similar allocations over time, although with much looser bounds (you’ll see much wider swings in allocations).
 
-I also included a rough tax model of ~10% annual tax on gains, but I haven’t yet determined the correct realized tax burden. The cumulative value shown does **not** have taxes subtracted. As noted above in the correlation matrix, the backtests use EDZ, but I substituted RWM for live testing.
+I also included a rough tax model of ~10% annual tax on gains, but I haven’t yet determined the correct realized tax burden. The cumulative value shown does **not** have taxes subtracted. As noted above in the correlation matrix, the backtests use EDZ, but I substituted RWM for live testing. I do think the backtest is very optimistic for performance in 2022 and 2023, I think the combination of EDZ with tech did well for no real structural reason. I'd expect drawdowns closer to probably 30% over a sustained downtrend like that, but need to backtest with RWM.
 
 **Rolling portfolio weights in backtesting**  
 ![Backtest Weights:](/assets/img/allocations-backtest.png)
@@ -125,6 +125,7 @@ I also included a rough tax model of ~10% annual tax on gains, but I haven’t y
 ![Backtest Performance:](/assets/img/risk-parity-performance-backtest.png)
 
 Drawdowns reached around 12%, higher than anything seen so far in live
+
 **Drawdown in backtesting**  
 ![Backtest Drawdown:](/assets/img/drawdowns-backtest.png)
 
