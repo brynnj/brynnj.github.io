@@ -1,10 +1,10 @@
 # Set hidden: true to hide a project card from the Projects page.
-- title: "AI Trader - Making ChatGPT Do Discretionary Trading"
-  description: "A crypto trading system using an LLM."
+- title: "AI Trading Bot"
+  description: "Letting ChatGPT trade ETH for me."
   link: "/projects/ai-trader/"
   year: "2025"
-  image: "/assets/img/ai-trader-flow.png"
-  hidden: true
+  image: "/assets/img/ai_trader_flow.png"
+  hidden: false
 - title: "Strategy Lab: LLM-Driven Strategy Evolver"
   description: "A local LLM loop that proposes, runs, and scores unconventional strategies."
   link: "/projects/strategy-lab/"
