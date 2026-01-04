@@ -12,9 +12,10 @@
       <div class="wrap">
         <a class="site-title" href="{{ '/' | relative_url }}">{{ site.title }}</a>
         <nav class="site-nav">
-          <a href="{{ '/' | relative_url }}">Home</a>
-          <a href="{{ '/projects/' | relative_url }}">Projects</a>
-          <a href="{{ '/resume/' | relative_url }}">Resume</a>
+          <a class="{% if page.url == '/' %}is-active{% endif %}" href="{{ '/' | relative_url }}">Home</a>
+          <a class="{% if page.url contains '/projects/' %}is-active{% endif %}" href="{{ '/projects/' | relative_url }}">Projects</a>
+          <a class="{% if page.url == '/resume/' %}is-active{% endif %}" href="{{ '/resume/' | relative_url }}">Resume</a>
+          <a class="{% if page.url == '/contact/' %}is-active{% endif %}" href="{{ '/contact/' | relative_url }}">Contact</a>
         </nav>
       </div>
     </header>

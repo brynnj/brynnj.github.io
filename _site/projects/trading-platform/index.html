@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Algorithmic Trading Platform (Research & Experimentation) | James Brynn</title>
+    <meta name="description" content="Personal portfolio">
+    <link rel="stylesheet" href="/assets/css/style.css">
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="wrap">
+        <a class="site-title" href="/">James Brynn</a>
+        <nav class="site-nav">
+          <a class="" href="/">Home</a>
+          <a class="is-active" href="/projects/">Projects</a>
+          <a class="" href="/resume/">Resume</a>
+          <a class="" href="/contact/">Contact</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="wrap content">
+      <article class="project">
+        <h2 id="overview">Overview</h2>
+
+<p>This is an end-to-end algorithmic trading platform I’ve been building for myself as a platform to experiment with faster-timeframe (second-scale) trading strategies. I wanted something that could run live, replay historical data, and show me what was going on without constantly making new scripts or pipelines for everything I wanted to test.</p>
+
+<p>Everything is in Python. I used pure numpy wherever possible but there’s a lot of room for optimization. However, it doesn’t make sense to put effort into that quite yet. I did mess around with some C++ bindings for some intensive indicator calcs, but haven’t taken that very far yet.</p>
+
+<hr />
+
+<h2 id="scope-and-focus">Scope and Focus</h2>
+
+<p>Most of the experimentation is around high-volatility, low-float stocks in premarket because that’s where I think a retail trader would have the edge (can take higher risk and liquidity is thinner). I’m focusing on the second/minute timeframe because I would obviously never be able to compete on HFT working from a laptop in California and anything longer might be institutional territory since they could accumulate positions over time. I’ve also seen some traders have consistent success in this area, so it seems like a good opportunity to try to make an algorithm that can mimic a discretionary trader to an extent.</p>
+
+<p>The same system could be pointed at other asset classes or timeframes with minimal changes (everything is intentionally agnostic to the timeframe of data being supplied, and it doesn’t inherently care about start or end of day so it could work just as well on a 24/7 crypto dataset).</p>
+
+<hr />
+
+<h2 id="architecture">Architecture</h2>
+
+<p><em>Scanner → Strategy Manager → Async Data Streams → Strategy State Machines → Execution (and visualization if enabled)</em></p>
+
+<p>At a high level, the platform is organized as a pipeline:</p>
+
+<ol>
+  <li>A stock selection layer produces a dynamic list of symbols.</li>
+  <li>A strategy manager reacts to changes in that list and spins up or shuts down data streams for each symbol.</li>
+  <li>Each symbol runs its own async data stream, pushing data into individual buffers for one or more strategies so they don’t block each other.</li>
+  <li>One or more strategy state machines consume this market data.</li>
+  <li>Trade signals flow into an execution and position layer (although I’m still in the phase of finding a strategy I actually like enough to try, so I haven’t built these out for this project).</li>
+  <li>Everything is mirrored into logs and/or a live UI and/or the terminal.</li>
+  <li>Data streams run until out of data if backtesting, or until shut down by the manager if live (for example, at market close)</li>
+</ol>
+
+<p>The intent was to be as modular as possible, and every layer has a dummy or testing version that can be swapped in for a more sophisticated version as needed.</p>
+
+<hr />
+
+<h2 id="core-components">Core Components</h2>
+
+<h3 id="stock-selection">Stock Selection</h3>
+
+<p>Stock selection lives behind a small interface:</p>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">update()</code></li>
+  <li><code class="language-plaintext highlighter-rouge">get_active_stock_list()</code></li>
+</ul>
+
+<p>The “scanner” depends on what I’m doing, so far it’s just:</p>
+<ul>
+  <li>fixed symbol lists for testing</li>
+  <li>premarket scanners with filters on price change, volume, float, industry, and other factors for a strategy I’m actively working on</li>
+</ul>
+
+<p>For any new strategy, I can extend the base scanner class and plug it in.</p>
+
+<p>It’s tough to use a scanner to go back in time and see what it would have picked on previous days, but it’s probably worth the effort to build this functionality because this is a really important part of some strategies. For now, I just have it run every morning so I can build up a dataset as I go. I get a list like this each day, and built a pipeline to fetch the relevant data from Databento so I can then go test how the combined scanner + strategy would’ve done on that day. I also get a much richer set showing exactly why every candidate got filtered for debugging.</p>
+
+<p><strong>Example of scanner selections</strong><br />
+<img src="/assets/img/scan-selections.png" alt="Scanner selections" style="max-width:70%; height:auto;" /></p>
+
+<hr />
+
+<h3 id="strategy-management">Strategy Management</h3>
+
+<p>The strategy manager handles lifecycle stuff:</p>
+<ul>
+  <li>detecting when symbols are added or removed</li>
+  <li>starting and stopping data feeds for each symbol</li>
+  <li>attaching one or more strategy instances to each symbol</li>
+</ul>
+
+<p>This structure lets a lot of symbols run concurrently. This was also one of the first things I set up in this architecture because I foresaw a time where if I was running multiple strategies and/or multiple tickers, I could have multiple entry signals at the same time, and if I was trading out of one account I’d need strict control across processes. I haven’t had to build this control yet, but the framework is in place so it won’t be a huge lift.</p>
+
+<hr />
+
+<h3 id="market-data-streams">Market Data Streams</h3>
+
+<p>I have different implementations for live WebSocket data and CSV replay emulating a WebSocket stream for backtests, but they share a base class so the state machines themselves don’t care where they’re getting data from.</p>
+
+<p>Everything gets normalized early into the same bar and quote schema, so again the strategies don’t care where the data came from.</p>
+
+<hr />
+
+<h3 id="strategy-state-machines">Strategy State Machines</h3>
+
+<p>Strategies are generally implemented as explicit state machines, and all have a few core handlers for new bars and quotes.</p>
+
+<p>Each one:</p>
+<ul>
+  <li>owns its indicators and rolling buffers for internal calcs</li>
+  <li>evaluates entry and exit conditions</li>
+  <li>emits trade intents rather than placing orders directly</li>
+</ul>
+
+<p>Indicators are also implemented with a standard interface and aren’t dependent on internal strategy structure, which is important both for the state machines and the visualizer.</p>
+
+<hr />
+
+<h3 id="execution-and-position-tracking">Execution and Position Tracking</h3>
+
+<p>All I’ve done so far with execution is make a dummy version that logs an entry, but it should be plug-and-play when I need to add a real execution layer. I can borrow a bit from what I built for previous Coinbase and Alpaca projects which did have actual execution layers.</p>
+
+<hr />
+
+<h3 id="visualization">Visualization</h3>
+
+<p>There’s a PyQtGraph-based charting utility that shows:</p>
+<ul>
+  <li>live candlesticks and volume</li>
+  <li>indicators</li>
+  <li>a running price feed, typically NBBO quotes</li>
+  <li>a log, which usually will include log outputs from a strategy that’s running</li>
+</ul>
+
+<p>It’s mostly a debug tool but it’s also just fun to watch it run with a strategy. When doing larger scale backtests or just iterating on a strategy I can disable the visualizer, since it’s the bottleneck in terms of playback speed, often by roughly two orders of magnitude. However, this also depends on whether or not the strategy is implemented efficiently and how much it tries to use quotes vs just the much less frequent bars - in the example below some of the entry and exit logic takes some time so it sometimes slows down when it gets a new minute bar.</p>
+
+<p><strong>Visualizer Example</strong></p>
+<video controls="" preload="metadata" width="100%">
+  <source src="/assets/videos/screen-cap-viz.mp4" type="video/mp4" />
+  Your browser does not support the video tag.
+</video>
+
+<hr />
+
+<h2 id="testing-and-backtesting">Testing and Backtesting</h2>
+
+<p>Any strategy can be run individually with historical data as a test, but I also built a few larger scale backtests for strategies I’m more interested in. This means:</p>
+
+<ul>
+  <li>replay a bunch of days of data for relevant tickers/time periods, typically defined by the datasets coming from my scanner runs each morning</li>
+  <li>parse all the logs and collect trade performance</li>
+  <li>do some post-processing (for example, applying slippage and fees since my current dummy execution layer doesn’t model them)</li>
+  <li>put together some stats</li>
+</ul>
+
+<p>Example stats for a strategy that may or may not be legit (still building a bigger dataset to test “out-of-sample”):</p>
+
+<p><img src="/assets/img/strategy-stats.png" alt="Stats:" /></p>
+
+<p>Also in the interest of seeing robustness to missed entries and unexpected high-slippage events (I am trading very volatile stocks after all), I’ll typically do a Monte Carlo eval on the trade history trades where slippage is dispersed, there’s a chance of missing any given trade, and there’s a chance of having an anomalous event where I pull from a much higher slippage distribution.</p>
+
+<p>The slippage and missed entry percents are loosely based on experience trading by hand, but are still made up, so this doesn’t automatically make a strategy valid but it’s useful as a sensitivity check.</p>
+
+<p><strong>Monte Carlo Example</strong>
+<img src="/assets/img/monte-carlo-example.png" alt="Scanner:" /></p>
+
+<hr />
+
+<h2 id="limitations-and-open-areas">Limitations and Open Areas</h2>
+
+<ul>
+  <li>Data availability and rate limits depend heavily on provider, and I’m trying to work with as much free data as possible so I’m fairly handicapped on actual strategy development and backtesting.</li>
+  <li>Python limits how far latency-sensitive ideas can go, but a port to C++ wouldn’t be too difficult where needed.</li>
+  <li>Multi-ticker live testing with actual WebSocket connections from Polygon(Massive now) is still not quite working as expected, actively debugging this and learning about the right way to build an async and/or multiprocessed live system.</li>
+</ul>
+
+<hr />
+
+<h2 id="current-direction">Current Direction</h2>
+
+<p>Lately the work has been around:</p>
+<ul>
+  <li>building better scanners</li>
+  <li>developing an actual strategy I want to take to live testing (I find that having a promising strategy is the best catalyst for actually getting myself to work on the tooling)</li>
+  <li>dev to support multiple live data streams</li>
+</ul>
+
+<p>These are probably going to be the focus for a while, although I think I mostly have a scanner where I want it. If I can get my data feeds to a good spot and the strategy is promising, next up would be a bit of live paper trading with the integrated system, then working on the execution layer (which I actually think won’t be too bad, other than controlling competing entries across multiple tickers)</p>
+
+
+      </article>
+    </main>
+  </body>
+</html>

@@ -5,21 +5,35 @@ title: "Home"
 
 # James Brynn
 
-<p class="lead">
-  Aerospace engineer focused on multibody dynamics, with a side interest in trading, simulation, and keeping up with modern tools so I don't get replaced.
+<div class="hero">
+  <div class="hero-copy">
+    <p class="lead">
+      Aerospace engineer focused on multibody dynamics, with a side interest in trading, learning new simulation tools and physics, and keeping up with modern tools so I don't get replaced.
+    </p>
+  </div>
+  <div class="hero-media" role="img" aria-label="Hero image placeholder"></div>
+</div>
 
-  Big fan of trying things, failing fast, and learning as much as possible.
-</p>
+<section class="section">
 
 ## About Me
 
-I'm currently the Multibody Dynamics Lead at Relativity Space, working on the Terran R launch vehicle (a medium-heavy lift rocket). Most of my work is MBD and simulation, with a bit of fluid dynamics and loads here and there, and I'm very interested in the GNC/mission design realm as well as the other flight sciences disciplines and love reading about these fields. In my free time I like to mess around with algorithmic trading, AI/ML, and anything else that's hard and unlikely to actually work. This portfolio is all the side stuff that doesn't fit on the resume - a mix of algorithmic trading strategies/research/experiments, some simulation work, and various AI/ML things I've tried. 
+I'm currently the Multibody Dynamics Lead at Relativity Space, focused on simulation and vehicle dynamics for the Terran R launch vehicle. I spend most of my time in modeling and analysis, doing my best to help support the fast development of good hardware. I focus on stage separation, fairing separation, fluid transient modeling, and landing leg deployment, and touchdown, and within the MBD team we also cover the dynamics of all transport and recovery ops.
 
-Disclaimer - many of these projects are not "successful", and the things that actually have value I keep hidden in private repos, but if you reach out I'm more than happy to talk about anything you find interesting or want to dig deeper on.
+Back in college I learned how to design hardware on the Michigan Baja Racing team, working on drivetrain (primarily CVT).
+
+Outside of work I try to self-teach algorithmic trading, simulation, and applied ML. This portfolio is *not* a mechanical engineering or dynamics portfolio, just a collection of experiments and projects that don't fit on a resume. However, all of them have been very effective for learning about Python, software architecture, math, and new ways of thinking about risk and decision making. They've improved my engineering ability in some indirect ways I didn't expect.
+
+I keep this stuff in private repos for the most part, but I'm happy to talk about any of these if you have questions or you're willing to offer some advice. 
+</section>
+
+<section class="section">
 
 ## Background
 
-- Multibody Dynamics Lead at Relativity Space
-- B.S. and M.S. in mechanical engineering, University of Michigan.
+- Multibody Dynamics Lead at Relativity Space, 2x dynamics intern previously.
+- B.S. and M.S. in mechanical engineering, University of Michigan (3.99 GPA and 4.0 GPA respectively).
 - Computer science minor.
-- Baja SAE competitor 3x, primarily on drivetrain.
+- 3x 1st place Mike Schmidt Memorial Iron Team Award with Michigan Baja Racing.
+
+</section>

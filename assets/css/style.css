@@ -1,19 +1,37 @@
 @import url("https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap");
 
 :root {
+  /* --- Core blues (keep your existing vibe) --- */
   --bg: #0b0f14;
   --bg-2: #0f1520;
   --ink: #e7edf7;
   --muted: #9aa6b8;
-  --accent: #4dd4ff;
-  --accent-2: #7c5cff;
+
+  /* --- Gold accents (new) --- */
+  --accent: #f5c26b;        /* gold */
+  --accent-2: #ffd38a;      /* brighter gold for hover */
+
+  /* --- Surfaces --- */
   --card: #111824;
+  --card-2: #0e1520;        /* slightly deeper surface */
   --border: #1e2a3b;
   --shadow: rgba(0, 0, 0, 0.35);
+
+  /* --- Glow system (gold, with a subtle cool counter-glow) --- */
+  --glow-gold: rgba(245, 194, 107, 0.55);
+  --glow-gold-weak: rgba(245, 194, 107, 0.22);
+  --glow-cool: rgba(120, 170, 255, 0.12);
+
+  /* --- Focus ring --- */
+  --focus: rgba(255, 211, 138, 0.50);
 }
 
 * {
   box-sizing: border-box;
+}
+
+html {
+  color-scheme: dark;
 }
 
 body {
@@ -25,15 +43,16 @@ body {
   position: relative;
   overflow-x: hidden;
 
-  /* Base static gradients */
+  /* Blue-gray base with a warm gold “presence” */
   background:
-    radial-gradient(1200px 600px at 10% -10%, rgba(77, 212, 255, 0.10), transparent 55%),
-    radial-gradient(1000px 700px at 100% 0%, rgba(124, 92, 255, 0.10), transparent 55%),
+    radial-gradient(900px 600px at 8% -10%, rgba(120, 170, 255, 0.12), transparent 58%),
+    radial-gradient(900px 700px at 105% 0%, rgba(120, 170, 255, 0.10), transparent 60%),
+    radial-gradient(1000px 600px at 35% 10%, rgba(245, 194, 107, 0.10), transparent 62%),
     linear-gradient(180deg, var(--bg), var(--bg-2));
 }
 
 /* ======================================================
-   Subtle grid overlay (kept, but secondary)
+   Subtle grid overlay (kept, but more restrained)
    ====================================================== */
 body::after {
   content: "";
@@ -43,20 +62,46 @@ body::after {
   z-index: -1;
 
   background-image:
-    linear-gradient(rgba(255, 255, 255, 0.07) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.07) 1px, transparent 1px);
+    linear-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.06) 1px, transparent 1px);
 
-  background-size: 48px 48px;
-  opacity: 0.18;
+  background-size: 54px 54px;
+  opacity: 0.14;
 }
 
+/* Extra “atmosphere” layer: soft noise + vignette */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: -1;
+
+  background:
+    radial-gradient(1200px 700px at 50% -10%, rgba(0, 0, 0, 0.0), rgba(0, 0, 0, 0.35)),
+    radial-gradient(900px 600px at 50% 115%, rgba(0, 0, 0, 0.0), rgba(0, 0, 0, 0.45));
+
+  opacity: 1;
+}
+
+/* ======================================================
+   Links / focus
+   ====================================================== */
 a {
   color: var(--accent);
   text-decoration: none;
 }
 
 a:hover {
-  color: #9be7ff;
+  color: var(--accent-2);
+}
+
+a:focus-visible,
+button:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 3px;
+  border-radius: 8px;
 }
 
 .wrap {
@@ -65,10 +110,24 @@ a:hover {
   padding: 0 22px;
 }
 
+/* ======================================================
+   Header / nav
+   ====================================================== */
 .site-header {
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid rgba(30, 42, 59, 0.9);
   padding: 28px 0;
-  backdrop-filter: blur(8px);
+
+  /* Keep it classy on GitHub Pages: blur may be unsupported in some browsers, but safe */
+  backdrop-filter: blur(10px);
+  background: rgba(11, 15, 20, 0.45);
+}
+
+.site-header .wrap {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 12px 22px;
 }
 
 .site-title {
@@ -76,10 +135,19 @@ a:hover {
   font-weight: 700;
   letter-spacing: 0.04em;
   text-transform: uppercase;
+  margin-right: auto;
+}
+
+.site-title a {
+  color: var(--ink);
+}
+
+.site-title a:hover {
+  color: var(--accent-2);
 }
 
 .site-nav {
-  margin-top: 12px;
+  margin-top: 0;
   display: flex;
   gap: 18px;
   font-size: 15px;
@@ -87,8 +155,80 @@ a:hover {
   letter-spacing: 0.08em;
 }
 
+.site-nav a {
+  color: var(--muted);
+  position: relative;
+  padding-bottom: 6px;
+}
+
+.site-nav a:hover {
+  color: var(--ink);
+}
+
+.site-nav a.is-active {
+  color: var(--ink);
+}
+
+/* Gold underline on hover/active feel */
+.site-nav a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0px;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(245, 194, 107, 0.85), transparent);
+  transform: scaleX(0);
+  transform-origin: center;
+  transition: transform 0.18s ease;
+  opacity: 0.9;
+}
+
+.site-nav a:hover::after {
+  transform: scaleX(1);
+}
+
+.site-nav a.is-active::after {
+  transform: scaleX(1);
+}
+
+/* ======================================================
+   Content / typography
+   ====================================================== */
 .content {
   padding: 48px 0 80px;
+}
+
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 28px;
+  margin: 18px 0 26px;
+}
+
+.hero-copy {
+  min-width: 0;
+}
+
+.hero-media {
+  width: clamp(220px, 28vw, 300px);
+  aspect-ratio: 1 / 1;
+  border-radius: 18px;
+  border: 1px solid rgba(30, 42, 59, 0.95);
+  background:
+    radial-gradient(500px 220px at 20% 20%, rgba(120, 170, 255, 0.18), transparent 65%),
+    radial-gradient(420px 260px at 80% 0%, rgba(245, 194, 107, 0.16), transparent 60%),
+    linear-gradient(160deg, rgba(17, 24, 36, 0.95), rgba(14, 21, 32, 0.95));
+  box-shadow:
+    0 18px 42px rgba(0, 0, 0, 0.45),
+    0 0 26px rgba(245, 194, 107, 0.10);
+}
+
+.section {
+  margin-top: 36px;
+  padding-top: 22px;
+  border-top: 1px solid rgba(30, 42, 59, 0.75);
 }
 
 h1, h2, h3 {
@@ -110,6 +250,9 @@ ul {
   padding-left: 20px;
 }
 
+/* ======================================================
+   Projects grid + neon glow cards
+   ====================================================== */
 .project-list {
   list-style: none;
   padding: 0;
@@ -119,28 +262,110 @@ ul {
   gap: 22px;
 }
 
+/* Card is “double-layered”:
+   - border stays subtle at rest
+   - glow appears on hover via a pseudo-element
+*/
 .project-card {
-  background: var(--card);
-  border: 1px solid var(--border);
+  position: relative;
+  background: linear-gradient(180deg, rgba(17, 24, 36, 0.92), rgba(14, 21, 32, 0.92));
+  border: 1px solid rgba(30, 42, 59, 0.95);
   border-radius: 14px;
   padding: 18px;
   display: grid;
   gap: 14px;
-  box-shadow: 0 12px 30px var(--shadow);
-  transition: transform 0.2s ease, border-color 0.2s ease;
+
+  box-shadow:
+    0 12px 30px var(--shadow),
+    0 1px 0 rgba(255, 255, 255, 0.03) inset;
+
+  transition:
+    transform 0.18s ease,
+    border-color 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+/* Glow halo */
+.project-card::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: 14px;
+  pointer-events: none;
+
+  opacity: 0;
+  transition: opacity 0.18s ease;
+
+  /* The “neon border” look, without changing layout */
+  box-shadow:
+    0 0 0 1px rgba(245, 194, 107, 0.25),
+    0 0 22px 2px var(--glow-gold-weak),
+    0 0 44px 6px rgba(245, 194, 107, 0.10),
+    0 0 60px 10px var(--glow-cool);
+}
+
+/* Inner highlight stroke */
+.project-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 14px;
+  pointer-events: none;
+  opacity: 0.9;
+
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.03) inset;
 }
 
 .project-card:hover {
   transform: translateY(-4px);
-  border-color: rgba(77, 212, 255, 0.5);
+  border-color: rgba(245, 194, 107, 0.45);
+  box-shadow:
+    0 16px 44px rgba(0, 0, 0, 0.45),
+    0 1px 0 rgba(255, 255, 255, 0.04) inset;
 }
 
+.project-card:hover::before {
+  opacity: 1;
+}
+
+/* Make the title feel “premium” */
+.project-card h3 {
+  margin: 0 0 6px;
+  font-size: 18px;
+  letter-spacing: -0.005em;
+}
+
+.project-card h3 a {
+  color: var(--accent);
+}
+
+.project-card:hover h3 a {
+  color: var(--accent-2);
+}
+
+/* Description */
+.project-card p {
+  margin: 0;
+  color: var(--muted);
+}
+
+/* Thumbnail */
 .project-thumb {
   display: block;
   border-radius: 10px;
   overflow: hidden;
-  border: 1px solid var(--border);
+  border: 1px solid rgba(30, 42, 59, 0.95);
   background: #0a0f16;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35);
+  transition: border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.project-card:hover .project-thumb {
+  border-color: rgba(245, 194, 107, 0.30);
+  box-shadow:
+    0 14px 34px rgba(0, 0, 0, 0.45),
+    0 0 22px 2px rgba(245, 194, 107, 0.10);
 }
 
 .project-thumb img {
@@ -156,16 +381,6 @@ ul {
   gap: 6px;
 }
 
-.project-card h3 {
-  margin: 0 0 6px;
-  font-size: 18px;
-}
-
-.project-card p {
-  margin: 0;
-  color: var(--muted);
-}
-
 .project-year {
   font-size: 12px;
   color: var(--muted);
@@ -174,6 +389,9 @@ ul {
   font-family: "IBM Plex Mono", "Consolas", monospace;
 }
 
+/* ======================================================
+   Project page content
+   ====================================================== */
 .project {
   max-width: 760px;
 }
@@ -186,8 +404,16 @@ ul {
   width: 100%;
   height: auto;
   border-radius: 14px;
-  border: 1px solid var(--border);
-  box-shadow: 0 18px 38px var(--shadow);
+  border: 1px solid rgba(30, 42, 59, 0.95);
+  box-shadow: 0 18px 38px rgba(0, 0, 0, 0.45);
+}
+
+/* Slight gold “frame” on hover for images (optional but nice) */
+.project img:hover {
+  border-color: rgba(245, 194, 107, 0.35);
+  box-shadow:
+    0 22px 52px rgba(0, 0, 0, 0.55),
+    0 0 34px 6px rgba(245, 194, 107, 0.12);
 }
 
 .project figcaption {
@@ -196,13 +422,16 @@ ul {
   margin-top: 10px;
 }
 
+/* ======================================================
+   Resume embed
+   ====================================================== */
 .resume-embed {
   margin-top: 24px;
   border-radius: 14px;
   overflow: hidden;
-  border: 1px solid var(--border);
+  border: 1px solid rgba(30, 42, 59, 0.95);
   background: var(--card);
-  box-shadow: 0 18px 38px var(--shadow);
+  box-shadow: 0 18px 38px rgba(0, 0, 0, 0.45);
 }
 
 .resume-embed object {
@@ -211,9 +440,36 @@ ul {
   height: 1100px;
 }
 
+/* ======================================================
+   Reduced motion accessibility
+   ====================================================== */
+@media (prefers-reduced-motion: reduce) {
+  .project-card,
+  .project-card::before,
+  .project-thumb,
+  .site-nav a::after {
+    transition: none !important;
+  }
+  .project-card:hover {
+    transform: none;
+  }
+}
+
+/* ======================================================
+   Mobile
+   ====================================================== */
 @media (max-width: 700px) {
   h1 {
     font-size: 32px;
+  }
+
+  .hero {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-media {
+    width: min(320px, 100%);
+    justify-self: start;
   }
 
   .site-nav {

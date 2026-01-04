@@ -6,7 +6,7 @@
   image: "/assets/img/monte-carlo-example.png"
   hidden: false
 - title: "AI Trading Bot"
-  description: "Letting ChatGPT trade ETH for me."
+  description: "Letting ChatGPT trade ETH for me"
   link: "/projects/ai-trader/"
   year: "2025"
   image: "/assets/img/ai_trader_flow.png"

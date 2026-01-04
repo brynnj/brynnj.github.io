@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Strategy Lab: LLM-Driven Strategy Evolver | James Brynn</title>
+    <meta name="description" content="Personal portfolio">
+    <link rel="stylesheet" href="/assets/css/style.css">
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="wrap">
+        <a class="site-title" href="/">James Brynn</a>
+        <nav class="site-nav">
+          <a class="" href="/">Home</a>
+          <a class="is-active" href="/projects/">Projects</a>
+          <a class="" href="/resume/">Resume</a>
+          <a class="" href="/contact/">Contact</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="wrap content">
+      <article class="project">
+        <h1 id="strategy-lab-llm-driven-strategy-evolver">Strategy Lab: LLM-Driven Strategy Evolver</h1>
+
+<h2 id="overview">Overview</h2>
+<p>Strategy Lab is a lightweight experimentation loop that asks a local LLM (via Ollama) to propose novel, non-indicator-based trading ideas, runs the generated <code class="language-plaintext highlighter-rouge">run_strategy()</code> code, and scores performance with simple Sharpe, drawdown, and total return metrics. It logs prompts, code, and metrics for quick iteration and post-hoc analysis.</p>
+
+<h2 id="problem">Problem</h2>
+<p>I wanted a fast way to explore unconventional strategy ideas without hand-coding each one, while still keeping a reproducible evaluation loop and basic metrics to rank or reject candidates. This came to mind when I first learned about ollama/the ability to run an LLM locally in general. I realized after starting that this is really a poor man’s agent workflow and could be done way better if I just pay a bit for some real tools, but it was a useful exercise in learning how to build such a system.</p>
+
+<h2 id="approach--architecture">Approach / Architecture</h2>
+<p>A single-iteration loop prompts an LLM for a concise strategy and a <code class="language-plaintext highlighter-rouge">run_strategy()</code> function. The code block is parsed, written to a temporary module, dynamically imported, and executed to produce a DataFrame of returns. Metrics are computed and written to a log file so the prompt/response/score triad stays traceable. Everything is containerized and the sandbox is given very limited permissions in case the LLM produces any malicious code.</p>
+
+<h2 id="key-technical-details">Key technical details</h2>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">strategy_lab/main.py</code>: orchestrates the prompt -&gt; model generate -&gt; execute -&gt; score pipeline and logs each run to <code class="language-plaintext highlighter-rouge">data/</code>.</li>
+  <li><code class="language-plaintext highlighter-rouge">strategy_lab/models/ollama_model.py</code>: streams tokens from a local Ollama server (uses <code class="language-plaintext highlighter-rouge">host.docker.internal</code> when inside Docker).</li>
+  <li><code class="language-plaintext highlighter-rouge">strategy_lab/utils/code_parser.py</code>: extracts fenced Python code blocks for execution.</li>
+  <li><code class="language-plaintext highlighter-rouge">strategy_lab/utils/strategy_runner.py</code>: writes code to a temp file, dynamically imports it, executes <code class="language-plaintext highlighter-rouge">run_strategy()</code>, then cleans up.</li>
+  <li><code class="language-plaintext highlighter-rouge">strategy_lab/utils/metrics.py</code>: computes Sharpe, max drawdown, and total return from cumulative returns.</li>
+  <li><code class="language-plaintext highlighter-rouge">strategy_lab/run_dev.py</code> + <code class="language-plaintext highlighter-rouge">strategy_lab/dev_strategy.py</code>: manual strategy testing workflow for debugging outside the LLM loop.</li>
+</ul>
+
+<h2 id="results">Results</h2>
+<ul>
+  <li>My laptops are nothing special and the best I could do locally was deepseek-coder:6.7b. This is far too weak at reasoning to actually produce interesting strategies and iterate on results, and even the coding was so weak that most attempts had a syntax error or some other issue preventing me from even getting outputs. I think this has a lot of promise for both trading and many other projects, but I need to either invest in a good machine or start paying for API credits for a frontier model.</li>
+</ul>
+
+<h2 id="limitations">Limitations</h2>
+<ul>
+  <li>Executes model-generated code directly; no sandboxing beyond temp-file cleanup.</li>
+  <li>Metrics are minimal and assume daily data with annualization constant fixed at 252.</li>
+  <li>Lacks dataset/version tracking and experiment orchestration (no seeds or reproducible configs).</li>
+  <li>No automated tests or validation for malformed strategies or missing columns.</li>
+</ul>
+
+<h2 id="next-steps">Next steps</h2>
+<ul>
+  <li>Add strict validation around <code class="language-plaintext highlighter-rouge">run_strategy()</code> outputs and a safer execution sandbox.</li>
+  <li>Log input data provenance and strategy metadata (ticker, date range, parameters).</li>
+  <li>Expand metrics (e.g., Calmar, turnover, exposure) and add baseline comparisons.</li>
+  <li>Add a small experiment harness (e.g., multi-run sweep + leaderboard).</li>
+</ul>
+
+      </article>
+    </main>
+  </body>
+</html>

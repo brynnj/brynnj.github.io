@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>6-DOF Rigid Body Simulator + Web Viewer | James Brynn</title>
+    <meta name="description" content="Personal portfolio">
+    <link rel="stylesheet" href="/assets/css/style.css">
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="wrap">
+        <a class="site-title" href="/">James Brynn</a>
+        <nav class="site-nav">
+          <a class="" href="/">Home</a>
+          <a class="is-active" href="/projects/">Projects</a>
+          <a class="" href="/resume/">Resume</a>
+          <a class="" href="/contact/">Contact</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="wrap content">
+      <article class="project">
+        <h1 id="6-dof-rigid-body-simulator--web-viewer">6-DOF Rigid Body Simulator + Web Viewer</h1>
+
+<h2 id="overview">Overview</h2>
+<p>A Python-based 6-DOF rigid body simulator with a Babylon.js web viewer. It runs
+multi-body dynamics with configurable force/moment models, exports structured
+outputs, and provides a browser-based playback tool for inspection and demos.</p>
+
+<h2 id="problem">Problem</h2>
+<p>I wanted to build my own rigid body dynamics platform so I could mess around with orbital mechanics, flight dynamics, etc. without being bound to anything off-the-shelf.</p>
+
+<h2 id="approach--architecture">Approach / Architecture</h2>
+<p>The simulator integrates the 6-DOF ODEs for each body, aggregates forces from a
+pluggable model system, and writes artifacts for analysis and visualization:
+<code class="language-plaintext highlighter-rouge">sim_output.npz</code> (raw state history), <code class="language-plaintext highlighter-rouge">sim_output_plots.pdf</code> (summary plots),
+and <code class="language-plaintext highlighter-rouge">viewer/sim_output.json</code> (viewer-ready animation data).</p>
+
+<h2 id="key-technical-details">Key technical details</h2>
+<ul>
+  <li>Quaternion-based orientation propagation with normalization after integration.</li>
+  <li>Force/moment model interface (<code class="language-plaintext highlighter-rouge">ForceMomentModel</code>) with implementations for
+gravity, thrusters, and springs.</li>
+  <li>Multi-body state packing/unpacking so all bodies share one ODE solve call.</li>
+  <li>Postprocessing pipeline that exports both analytics (PDF) and visualization
+payloads (JSON for Babylon.js).</li>
+</ul>
+
+<h2 id="results">Results</h2>
+<ul>
+  <li>Generates per-body state plots and motion traces suitable for quick QA.</li>
+  <li>Produces a lightweight JSON animation for the web viewer with time-aligned
+position and quaternion samples.</li>
+</ul>
+
+<figure>
+  <img src="/assets/img/sixdof-sim-states.png" alt="State plots for simulated bodies" />
+  <figcaption>
+    Example state summary output (position, velocity, attitude, rates).
+  </figcaption>
+</figure>
+
+<figure>
+  <img src="/assets/img/sixdof-sim-viewer.png" alt="Babylon.js playback view" />
+  <figcaption>
+    Web viewer playback of multi-body motion for quick demos and reviews.
+  </figcaption>
+</figure>
+
+<h2 id="how-to-run--reproduce">How to run / reproduce</h2>
+<ol>
+  <li>Install dependencies with Poetry.</li>
+  <li>Run <code class="language-plaintext highlighter-rouge">poetry run python main.py</code> to generate the <code class="language-plaintext highlighter-rouge">.npz</code>, <code class="language-plaintext highlighter-rouge">.pdf</code>, and viewer JSON.</li>
+  <li>Open <code class="language-plaintext highlighter-rouge">viewer/index.html</code>, or serve the repo and browse to <code class="language-plaintext highlighter-rouge">/viewer/</code>.</li>
+</ol>
+
+<h2 id="limitations">Limitations</h2>
+<ul>
+  <li>No built-in validation against external dynamics benchmarks yet.</li>
+  <li>No implementation of constraints or joints - not set up for kinematic trees, just independent bodies that can interact with arbitrary force laws.</li>
+  <li>Force models are simple and constant; time-varying controls are minimal.</li>
+  <li>Viewer focuses on playback, not interactive measurement or analysis tools.</li>
+</ul>
+
+<h2 id="next-steps">Next steps</h2>
+<ul>
+  <li>Add a scenario/config loader to define bodies and models without code changes.</li>
+  <li>Expand model library (aero drag, attitude control, contact constraints).</li>
+  <li>Add automated regression tests and a reproducible benchmark suite.</li>
+</ul>
+
+      </article>
+    </main>
+  </body>
+</html>

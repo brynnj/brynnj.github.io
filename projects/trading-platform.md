@@ -1,7 +1,7 @@
 ---
 layout: project
 title: "Algorithmic Trading Platform (Research & Experimentation)"
-description: "A modular, event-driven trading platform built to explore strategy design and practice building a live system, using a shared codebase for testing and live execution."
+description: "A modular trading platform built for strategy design and live deployments."
 year: 2025
 tags: [trading, python, asyncio, systems, market-structure]
 ---
@@ -65,13 +65,8 @@ It's tough to use a scanner to go back in time and see what it would have picked
 
 The strategy manager handles lifecycle stuff:
 - detecting when symbols are added or removed
-- starting and stopping per-symbol async tasks
-- attaching one or more strategy instances to each symbol.
-
-Each active symbol maps to:
-- one data stream,
-- a list of strategy state machines,
-- and an async task that routes events.
+- starting and stopping data feeds for each symbol
+- attaching one or more strategy instances to each symbol
 
 This structure lets a lot of symbols run concurrently. This was also one of the first things I set up in this architecture because I foresaw a time where if I was running multiple strategies and/or multiple tickers, I could have multiple entry signals at the same time, and if I was trading out of one account I'd need strict control across processes. I haven't had to build this control yet, but the framework is in place so it won't be a huge lift.
 
@@ -87,20 +82,20 @@ Everything gets normalized early into the same bar and quote schema, so again th
 
 ### Strategy State Machines
 
-Strategies are generally implemented as explicit state machines, but all have a few core handlers for new bars and quotes.
+Strategies are generally implemented as explicit state machines, and all have a few core handlers for new bars and quotes.
 
 Each one:
-- owns its indicators and rolling buffers
+- owns its indicators and rolling buffers for internal calcs
 - evaluates entry and exit conditions
-- emits trade intents rather than placing orders directly.
+- emits trade intents rather than placing orders directly
 
-Indicators are also implemented with a standard interface and aren't contained within the strategies themselves, which is important both for the state machines and the visualizer.
+Indicators are also implemented with a standard interface and aren't dependent on internal strategy structure, which is important both for the state machines and the visualizer.
 
 ---
 
 ### Execution and Position Tracking
 
-All I've done so far with execution is make a dummy layer that logs an entry, but it should be plug-and-play when I need to add a real execution layer. I can borrow a bit from what I built for previous Coinbase and Alpaca projects which did have actual execution layers.
+All I've done so far with execution is make a dummy version that logs an entry, but it should be plug-and-play when I need to add a real execution layer. I can borrow a bit from what I built for previous Coinbase and Alpaca projects which did have actual execution layers.
 
 ---
 
@@ -119,7 +114,6 @@ It’s mostly a debug tool but it's also just fun to watch it run with a strateg
   <source src="/assets/videos/screen-cap-viz.mp4" type="video/mp4">
   Your browser does not support the video tag.
 </video>
-(yes the rough appearance is intentional, I like the aesthetic of focusing on the numbers and data rather than the UI)
 
 ---
 
@@ -129,16 +123,16 @@ Any strategy can be run individually with historical data as a test, but I also 
 
 - replay a bunch of days of data for relevant tickers/time periods, typically defined by the datasets coming from my scanner runs each morning
 - parse all the logs and collect trade performance
-- do some post-processing (for example, applying slippage and fees)
+- do some post-processing (for example, applying slippage and fees since my current dummy execution layer doesn't model them)
 - put together some stats
 
 Example stats for a strategy that may or may not be legit (still building a bigger dataset to test "out-of-sample"):
 
 ![Stats:](/assets/img/strategy-stats.png)
 
-Also in the interest of seeing robustness to missed entries and unexpected high-slippage events (I am trading very volatile stocks after all), I'll typically do a Monte Carlo eval on the set of trades where slippage is dispersed, there's a chance of missing any given trade, and there's a chance of having an anomalous event where I pull from a much higher slippage distribution.
+Also in the interest of seeing robustness to missed entries and unexpected high-slippage events (I am trading very volatile stocks after all), I'll typically do a Monte Carlo eval on the trade history trades where slippage is dispersed, there's a chance of missing any given trade, and there's a chance of having an anomalous event where I pull from a much higher slippage distribution.
 
-The slippage and missed entry percents are pretty made up, so this doesn't automatically make a strategy valid, but it's useful as a sensitivity check.
+The slippage and missed entry percents are loosely based on experience trading by hand, but are still made up, so this doesn't automatically make a strategy valid but it's useful as a sensitivity check.
 
 **Monte Carlo Example**
 ![Scanner:](/assets/img/monte-carlo-example.png)

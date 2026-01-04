@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>AI Trader: LLM-Driven ETH Perps | James Brynn</title>
+    <meta name="description" content="Personal portfolio">
+    <link rel="stylesheet" href="/assets/css/style.css">
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="wrap">
+        <a class="site-title" href="/">James Brynn</a>
+        <nav class="site-nav">
+          <a class="" href="/">Home</a>
+          <a class="is-active" href="/projects/">Projects</a>
+          <a class="" href="/resume/">Resume</a>
+          <a class="" href="/contact/">Contact</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="wrap content">
+      <article class="project">
+        <h2 id="overview">Overview</h2>
+
+<p>This is an experimental crypto trading system that uses an LLM to generate trade decisions for ETH perpetual futures.</p>
+
+<p>The core idea was to see what happens if you give an LLM a compact snapshot of market context and ask it to make a concrete trading decision — entry, direction, sizing, and exits — under strict constraints.</p>
+
+<p>Some crypto seems to sit in an interesting middle ground:</p>
+<ul>
+  <li>liquid enough that slippage is manageable,</li>
+  <li>volatile enough that there’s money to be made,</li>
+  <li>some evidence here and there that there are potential inefficiencies still (example: https://www.mdpi.com/2227-7390/10/13/2338)</li>
+</ul>
+
+<p>I ended up using ethereum perpetual futures for this project because they had just launched on Coinbase and had a promo with extremely low fees.</p>
+
+<p>I wasn’t expecting an LLM to successfully predict price or anything magic, the experiment was more about whether it could reason when given good context and behave more like a discretionary trader than a fixed rule set.</p>
+
+<p>One constraint was that I built this while working around free ChatGPT API usage limits, which meant prompts had to stay concise and decision frequency had to be limited. Running on a 30 min interval was about as frequent as I could get while still keeping enough context and instructions in the prompt.</p>
+
+<hr />
+
+<h2 id="structure">Structure</h2>
+
+<p><strong>System Flow</strong>
+<img src="/assets/img/ai_trader_flow.png" alt="Flow diagram" /></p>
+
+<p>The system is split into a few stages:</p>
+
+<ol>
+  <li><strong>Data collection</strong> builds a snapshot of recent market state.</li>
+  <li><strong>LLM decisioning</strong> produces a structured trade decision, with a brief description of the logic behind the decision so I can go back and try to understand why it took good and bad trades.</li>
+  <li><strong>Safety validation</strong> checks the decision against hard constraints to prevent runaway sizing.</li>
+  <li><strong>Execution</strong> places or manages orders via a broker abstraction. Initially this was just a placeholder that tracked entry and exit prices to paper trade, and later I swapped it out for an actual Coinbase interface.</li>
+</ol>
+
+<p>A scheduler runs this on 30 min intervals (just used cron on an EC2 instance). The first step is to check if there’s already an open position, and if so the cycle is skipped before the data collection step starts.</p>
+
+<p>The LLM is intentionally isolated behind schemas and validation logic. It never talks to an exchange directly.</p>
+
+<hr />
+
+<h2 id="data--prompting">Data &amp; Prompting</h2>
+
+<p>Each decision cycle builds a snapshot that includes:</p>
+<ul>
+  <li>recent price and volume bars (30m),</li>
+  <li>higher-timeframe context (daily indicators),</li>
+  <li>a short summary of recent relevant news (including adjacent news like BTC and general market sentiment, to capture the risk-on or risk-off feel).</li>
+</ul>
+
+<p>Prompting included context about what it was doing and its objective, some guidance on how to interpret the provided data, and some nudges to bias it towards momentum.</p>
+
+<hr />
+
+<h2 id="decision--safety-layer">Decision &amp; Safety Layer</h2>
+
+<p>The LLM is required to return a JSON object that conforms to a strict schema:</p>
+<ul>
+  <li>action (enter / hold / exit),</li>
+  <li>direction,</li>
+  <li>sizing,</li>
+  <li>stop loss and take profit levels,</li>
+  <li>and reasoning text (for logging only).</li>
+</ul>
+
+<p>Pydantic validates this output before anything happens.</p>
+
+<p>On top of that, a safety layer enforces:</p>
+<ul>
+  <li>position limits,</li>
+  <li>required SL/TP presence,</li>
+  <li>no new entries if a position is already open</li>
+</ul>
+
+<p>If anything fails validation, the cycle is skipped.</p>
+
+<hr />
+
+<h2 id="execution">Execution</h2>
+
+<p>Execution runs through a broker abstraction so the same logic supports paper trading and live exchange-backed trading.</p>
+
+<p>Order placement, position tracking, and exits are handled outside the LLM loop.</p>
+
+<p>All of this was deployed on an AWS EC2 instance that I spun up for myself a year ago. I have a framework reasonably well abstracted for strategies like this that run at scheduled intervals, so this shared a good chunk of code with the min variance deployment on Alpaca.</p>
+
+<p>(as an aside, I also built a super simple dashboard for these strategies, so the EC2 instance also has code for that backend, but I haven’t really taken that anywhere yet)</p>
+
+<hr />
+
+<h2 id="results">Results</h2>
+
+<p>Behavior depended heavily on market regime and prompt bias.</p>
+
+<p>Early on, I paper traded the system during a time where ETH was making big moves (May through September 2025). The prompts were momentum-oriented so performance looked very good.</p>
+
+<p>Since I switched to live trading, ETH has been coming back down. There were still a few moves in October that lasted long enough for a momentum strategy to do well, but the price drop since and many failed breakouts mean this strategy keeps bleeding money, and has given back pretty much all of the initial gains.</p>
+
+<p><strong>Trade timeline and equity curve for real-money testing</strong>
+<img src="/assets/img/ai_trader_equity_curve.png" alt="Equity curve" /></p>
+
+<p>Over the full tested period, it did outperform holding ETH outright and stayed out of major downtrends. I would like to leave it on until ETH sees a sizeable move upwards again and I get to see it performing in the regime it was built for, but I can’t really wait out the drawdown, so for now I’ve disabled it. The focus needs to be on a way to backtest this if I want to try any more with it.</p>
+
+<hr />
+
+<h2 id="takeaways-so-far">Takeaways So Far</h2>
+
+<p>In general, it doesn’t do as well as I’d hope at bringing in broader market trends and sentiment. I think this is the result of bad features more than anything, but I’d like it to have a better understanding of risk-on vs risk-off sentiment and tie that to it’s assessment of whether or not a breakout is likely to continue.</p>
+
+<p>One thing I haven’t implemented yet but would like to try is feeding recent trade performance back into the snapshot in a very compact form. Even minimal self-feedback might help the system adjust across regimes. Also, some notion of sentiment (going beyond just news) could go a long way - when I started this I was using cryptopanic and had a significantly richer feature set, but they upped prices significantly and so I moved away from that.</p>
+
+<p>Unsurprisingly, not being able to backtest is a huge handicap, every change is a guess and I only get to see performance in whatever market exists now.</p>
+
+<hr />
+
+<h2 id="next-steps">Next Steps</h2>
+
+<p>The most important next step would be to figure out a way to backtest without blowing through tokens. Not sure yet how to pull that off other than a) eat the cost or b) get a strong enough machine (still eating the cost) to run the decisions locally with a powerful model off ollama.</p>
+
+<p>Longer term, this project is probably heading into more traditional model-based or RL-driven approaches using a similar feature set. The LLM doesn’t appear to be adding all that much in the way of interpreting price and volume action, so it’s just becoming a feature engineering exercise, and it would help to get around all the token use constraints holding me back. I have a metalabeling project in the works.</p>
+
+<p>For now, it’s a useful sandbox for building a system around LLM reasoning, safeguarding it well enough to actually deploy my own money live, and building a robust live pipeline that ran and generated results for months without issues or intervention.</p>
+
+      </article>
+    </main>
+  </body>
+</html>

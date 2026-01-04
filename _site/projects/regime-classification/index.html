@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Regime Labeling | James Brynn</title>
+    <meta name="description" content="Personal portfolio">
+    <link rel="stylesheet" href="/assets/css/style.css">
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="wrap">
+        <a class="site-title" href="/">James Brynn</a>
+        <nav class="site-nav">
+          <a class="" href="/">Home</a>
+          <a class="is-active" href="/projects/">Projects</a>
+          <a class="" href="/resume/">Resume</a>
+          <a class="" href="/contact/">Contact</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="wrap content">
+      <article class="project">
+        <h1 id="regime-labeling-experiments">Regime Labeling Experiments</h1>
+
+<p>I’ve been thinking about regime labeling as a filter on trade entries for a
+long time. Everything seems to eventually assume trending mean-reverting. When
+strategies struggle, it often feels like the removing bad entries when in the wrong market is all that’s needed.</p>
+
+<p>This part of the project is an attempt to explore that idea more directly.
+Instead of trying to trade regimes outright, the goal here was to see whether
+regime structure can be defined in a reasonable way, and whether a model trained
+against that structure produces signals that line up with anything observable
+in future returns.</p>
+
+<hr />
+
+<h2 id="regime-labels-as-a-reference">Regime labels as a reference</h2>
+
+<p>For regime labeling I used the Amplitude-Based Labeler from Jonathan Shore’s <code class="language-plaintext highlighter-rouge">tseries_patterns</code> library.</p>
+
+<p>(As an aside, all of the content on tr8dr has been very inspiring. The possibility of starting from a good labeler to build a predictive model came from https://tr8dr.github.io/RLp1/)</p>
+
+<p>This labeler identifies three states, generally uptrend downtrend and flat. The labels are forward-looking, they’re not meant to be traded directly, but I’m using them as a truth label in my training data.</p>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">+1</code> for upward regimes,</li>
+  <li><code class="language-plaintext highlighter-rouge">-1</code> for downward regimes,</li>
+  <li><code class="language-plaintext highlighter-rouge">0</code> for neutral / choppy periods.</li>
+</ul>
+
+<p>Example of labeled data:</p>
+
+<p><img src="/assets/img/btc_labeled.png" alt="Example of labeled data:" /></p>
+
+<p>As a simple assessment of the validity of the regime label, the 24 bar forward returns of the labeled dataset show significant predictive power (this is forward looking though of course)</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">H</span><span class="o">=</span>24 bars
+           n      mean       std  win_rate    median
+label
+<span class="nt">-1</span>      6397 <span class="nt">-0</span>.033619  0.177416  0.337033 <span class="nt">-0</span>.012761
+ 0     16292  0.003378  0.084168  0.524122  0.000976
+ 1      7844  0.021708  0.086135  0.691229  0.013007
+</code></pre></div></div>
+
+<p>There’s also good persistence within the regimes, so there would be some useful, tradeable information if we could predict the labels accurately.</p>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">===</span> Empirical transition matrix <span class="o">(</span>P[next_label | label]<span class="o">)</span> <span class="o">===</span>
+          to_-1    to_0    to_1
+from_-1  0.9023  0.0592  0.0385
+from_0   0.0234  0.9512  0.0254
+from_1   0.0308  0.0531  0.9162
+</code></pre></div></div>
+<hr />
+
+<p>The goal is then to train a classifier to label the current regime as accurately as possible, without future information, so that it could be used in an actual strategy. Instead of forcing a hard decision, the model outputs a probability distribution across all three states at each timestep. These can be used as-is or combined into a single trend score metric evaluating the confidence of the label being +1 or -1 instead of 0.</p>
+
+<hr />
+
+<h2 id="model-features-and-the-walk-forward-setup">Model, features, and the walk-forward setup</h2>
+
+<p>This part is the “predictive” side of the regime experiment: take the <strong>3-state labels</strong> (<code class="language-plaintext highlighter-rouge">-1</code>, <code class="language-plaintext highlighter-rouge">0</code>, <code class="language-plaintext highlighter-rouge">+1</code>) from the amplitude-based labeler and train a classifier that outputs <strong>probabilities for all three states</strong> at each candle.</p>
+
+<h3 id="data-alignment--joining">Data alignment / joining</h3>
+
+<p>I start with two time-aligned inputs:</p>
+
+<ul>
+  <li><strong>Labels file:</strong> timestamps + a discrete regime label (<code class="language-plaintext highlighter-rouge">-1</code>, <code class="language-plaintext highlighter-rouge">0</code>, <code class="language-plaintext highlighter-rouge">+1</code>).<br />
+These labels come from the Amplitude-Based Labeler (not my code), and they’re treated as the reference definition of “trend up / chop / trend down.”</li>
+  <li><strong>OHLCV (and indicators) file:</strong> hourly candles with OHLCV, plus optional precomputed indicators (I found a kaggle dataset for this that had a bunch of indicators in there already, so I just used some of those).</li>
+</ul>
+
+<h3 id="feature-creation">Feature creation</h3>
+
+<p>The feature set was a collection of stuff meant to indicatr price and volume action and things that demonstrate an active breakout. This was just my first pass - there’s likely tons of room to improve this set. Some of the features include:</p>
+
+<ul>
+  <li>1-bar log return</li>
+  <li>candle range/body fractions (wick/body proxies)</li>
+  <li>ATR-ish volatility (in bps)</li>
+  <li>Donchian-style distances to recent highs/lows (in bps)</li>
+  <li>simple MACD histogram + slope</li>
+  <li>volume spike / z-score style features</li>
+</ul>
+
+<p>I used sklearn for all of the ML work - standardizing and scaling, the model itself, metrics, etc.</p>
+
+<h3 id="model-choice">Model choice</h3>
+
+<p>This is a <strong>multiclass classifier</strong> that outputs a probability vector over the three states.</p>
+
+<p>I mainly used a gradient-boosted tree classifier (<code class="language-plaintext highlighter-rouge">HistGradientBoostingClassifier</code>) because it tends to behave well on mixed feature sets without a ton of tuning.</p>
+
+<p>The output of each fold is:</p>
+<ul>
+  <li>predicted class (<code class="language-plaintext highlighter-rouge">label_pred</code>)</li>
+  <li>predicted probabilities (<code class="language-plaintext highlighter-rouge">proba_-1</code>, <code class="language-plaintext highlighter-rouge">proba_0</code>, <code class="language-plaintext highlighter-rouge">proba_1</code>)</li>
+</ul>
+
+<p>Those probabilities are what later get turned into <code class="language-plaintext highlighter-rouge">proba_max</code>, the up-vs-down margin, and ultimately the trend score.</p>
+
+<h3 id="walk-forward-process-oos-probability-generation">Walk-forward process (OOS probability generation)</h3>
+
+<p>This runs as a <strong>walk-forward</strong> procedure:</p>
+
+<ul>
+  <li>There’s an initial <strong>warmup block</strong> (to ensure indicators exist and to avoid training on unstable early rows).</li>
+  <li>Then for each fold:
+    <ul>
+      <li>train on a contiguous historical block</li>
+      <li>test on the next contiguous block immediately following it</li>
+      <li>roll forward by a fixed step and repeat</li>
+    </ul>
+  </li>
+</ul>
+
+<p>I opted to use an <strong>expanding training window</strong> in most runs, meaning the training set grows over time (more like “real life” where you keep accumulating data), but there’s also a rolling-window option and it didn’t seem to change performance much.</p>
+
+<p>The important part: every row in <code class="language-plaintext highlighter-rouge">oos_regime_predictions.csv</code> is produced by a model that <strong>did not train on that row</strong> (or anything after it). That file is the out-of-sample prediction set that downstream analysis uses.</p>
+
+<p>Alongside predictions, I log fold-level metrics (accuracy, balanced accuracy, log loss) mainly as sanity checks.</p>
+
+<h2 id="trend-score-what-its-trying-to-measure">Trend score: what it’s trying to measure</h2>
+
+<p>Rather than treating regime prediction as a classification problem, I focused
+on extracting a confidence-weighted signal from the model’s probabilities.</p>
+
+<p>The trend score combines two pieces:</p>
+
+<ol>
+  <li>
+    <p>Overall confidence<br />
+The highest probability among the three states. This captures how decisive
+the model is, regardless of direction.</p>
+  </li>
+  <li>
+    <p>Directional separation<br />
+The difference between the probabilities of the up and down states. This
+ignores the neutral class and focuses purely on how asymmetric the
+directional beliefs are.</p>
+  </li>
+</ol>
+
+<p>Multiplying these together produces an unsigned trend score that’s large when:</p>
+<ul>
+  <li>the model is confident, and</li>
+  <li>that confidence is concentrated in one directional side rather than split or
+dominated by neutrality.</li>
+</ul>
+
+<p>A signed version simply applies the sign of the up-minus-down probability
+difference, which allows for directional tests without changing the underlying
+magnitude.</p>
+
+<p>At this stage, the trend score isn’t intended to be a trading signal. It’s just
+a way to collapse a three-state probability vector into something easier to
+analyze.</p>
+
+<hr />
+
+<h2 id="diagnostics-and-relationships">Diagnostics and relationships</h2>
+
+<p>Rather than optimizing classification accuracy, I looked at how the trend score
+relates to forward returns, across multiple horizons.</p>
+
+<h3 id="trend-score-vs-forward-return">Trend score vs forward return</h3>
+
+<p>The first pass is a raw scatter: do higher scores line up with anything
+interesting later? Unsurprisingly they don’t, because it’s unsigned.</p>
+
+<p><img src="/assets/img/scatter_trend_score_vs_fwd_ret_6.png" alt="Trend score vs fwd return" /></p>
+
+<h3 id="binned-mean-forward-return">Binned mean forward return</h3>
+
+<p><img src="/assets/img/binned_mean_fwd_ret_vs_trend_score.png" alt="Binned mean fwd return vs trend score" /></p>
+
+<p><img src="/assets/img/binned_mean_fwd_abs_ret_vs_trend_score.png" alt="Binned mean abs fwd return vs trend score" /></p>
+
+<p>Across horizons, the unsigned trend score has a noticeable correlation with
+absolute forward returns, so higher scores do tend to indicate bigger moves. There’s still little-to-no directional information in the unsigned trend score, again to be expected.</p>
+
+<h3 id="signed-trend-score-directional-check">Signed trend score (directional check)</h3>
+
+<p>I then tried putting a sign back in to see if the model has any meaningful predictive power directionally.</p>
+
+<p><img src="/assets/img/binned_mean_fwd_ret_vs_signed_trend.png" alt="Binned mean fwd return vs signed trend score" /></p>
+
+<p>Pretty promising with fixed-size bins (~2500 samples each) , but looking only at fixed extreme bins surprisingly adds quite a bit of noise instead of a cleaner signal:</p>
+
+<p><img src="/assets/img/binned_mean_fwd_ret_vs_signed_trend_fixed_bins.png" alt="Binned mean fwd return vs signed trend score (fixed bins)" /></p>
+
+<p>Overall, this regime prediction method seems more effective as a volatility signal than a directional indicator. Directional signal seems like it might exist, but it’s pretty weak and sensitive to how it’s sliced.</p>
+
+<p>That suggests this layer is probably more useful as context or a feature in a broader model than as a primary
+entry driver.</p>
+
+<hr />
+
+<h2 id="how-this-might-be-used">How this might be used</h2>
+
+<p>Some possible uses that seem consistent with the behavior above:</p>
+
+<ul>
+  <li>Trade filtering: avoid momentum-dependent strategies when conviction is low.</li>
+  <li>Sizing and risk: scale size, stops, or targets based on expected move
+magnitude.</li>
+  <li>Strategy gating: allow certain strategies to operate only when the regime
+score clears a threshold. Given the noise here, I would probably prefer this as part of a metalabeling system rather than a standalone decision gate.</li>
+  <li>Options framing: potentially useful in an options strat depending on how predicted move sizes compare to implied volatility. It’s possible that everything this model predicts would already be priced in.</li>
+</ul>
+
+<hr />
+
+<h2 id="next-steps">Next Steps</h2>
+
+<p>I really barely scratched the surface of the predictive model - this was my first try at feature set, model selection, training approach, etc. and I might be able to do significantly better if I work more at this (especially including features that aren’t just price and volume action, news and sentiment would probably go a long way). I first want to see if I can find an application for this in a metalabeler or otherwise, and if so I may revisit this to see how far I can push it.</p>
+
+      </article>
+    </main>
+  </body>
+</html>
