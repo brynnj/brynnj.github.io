@@ -16,7 +16,7 @@ title: "Home"
 
 ## About Me
 
-I'm currently the Multibody Dynamics Lead at Relativity Space, focused on simulation and vehicle dynamics for the Terran R launch vehicle. I spend most of my time in modeling and analysis, doing my best to help support the fast development of good hardware. I focus on stage separation, fairing separation, fluid transient modeling, and landing leg deployment, and touchdown, and within the MBD team we also cover the dynamics of all transport and recovery ops.
+I'm currently the Multibody Dynamics Lead at Relativity Space, working on the Terran R launch vehicle (medium-heavy lift, first stage resuable). I spend most of my time in modeling and analysis, doing my best to support the fast development of good hardware. I focus on stage separation, fairing separation, fluid transient modeling, landing leg deployment, and touchdown, and within the MBD team we also cover the dynamics of all transport and recovery ops.
 
 
 Back in college I learned how to design hardware on the Michigan Baja Racing team, working on drivetrain (primarily CVT).
