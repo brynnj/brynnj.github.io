@@ -1,4 +1,10 @@
 # Set hidden: true to hide a project card from the Projects page.
+- title: "Algorithmic Trading Platform"
+  description: "A modular, event-driven trading platform with async streams, backtests, and a real-time UI."
+  link: "/projects/trading-platform/"
+  year: "2025"
+  image: "/assets/img/monte-carlo-example.png"
+  hidden: false
 - title: "AI Trading Bot"
   description: "Letting ChatGPT trade ETH for me."
   link: "/projects/ai-trader/"
@@ -10,12 +16,6 @@
   link: "/projects/strategy-lab/"
   year: "2025"
   image: "/assets/img/strategy-lab.png"
-  hidden: true
-- title: "Algorithmic Trading Platform"
-  description: "A modular, event-driven trading platform with async streams, backtests, and a real-time UI."
-  link: "/projects/trading-platform/"
-  year: "2025"
-  image: "/assets/img/trading-platform-architecture.png"
   hidden: true
 - title: "6-DOF Rigid Body Simulator + Web Viewer"
   description: "A Python 6-DOF simulator with exportable outputs and a Babylon.js playback tool."

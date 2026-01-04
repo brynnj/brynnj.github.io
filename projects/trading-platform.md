@@ -112,7 +112,7 @@ There’s a PyQtGraph-based plotting utility that shows:
 - a running price feed, typically NBBO quotes
 - a log, which usually will include log outputs from a strategy that's running
 
-It’s mostly a debug tool but it's also just fun to watch it run with a strategy. When doing larger scale backtests or just iterating on a strategy I can disable the visualizer, since it's the bottleneck in terms of playback speed by probably 2 orders of magnitude. However, this also depends on whether or not the strategy is implemented well and how much it tries to use quotes vs just the much less frequent bars - in the example below some of the entry and exit logic takes a bit so it'll slow down when it gets a new minute bar. 
+It’s mostly a debug tool but it's also just fun to watch it run with a strategy. When doing larger scale backtests or just iterating on a strategy I can disable the visualizer, since it's the bottleneck in terms of playback speed by probably 2 orders of magnitude most of the time. However, this also depends on whether or not the strategy is implemented efficiently and how much it tries to use quotes vs just the much less frequent bars - in the example below some of the entry and exit logic takes a bit so it'll slow down when it gets a new minute bar. 
 
 **Visualizer Example**
 <video controls preload="metadata" width="100%">
