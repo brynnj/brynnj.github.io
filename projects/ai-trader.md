@@ -10,14 +10,14 @@ This is an experimental crypto trading system that uses an LLM to generate trade
 
 The core idea was to see what happens if you give an LLM a compact snapshot of market context and ask it to make a concrete trading decision — entry, direction, sizing, and exits — under strict constraints.
 
+I do want to clarify, I wasn't expecting this to be an actual scientifically sound project. It was more for fun, to get familiar with the relevant APIs, and building a system around LLM decision making with built-in guardrails.
+
 Some crypto seems to sit in an interesting middle ground:
 - liquid enough that slippage is manageable,
 - volatile enough that there’s money to be made,
 - some evidence here and there that there are potential inefficiencies still (example: https://www.mdpi.com/2227-7390/10/13/2338)
 
 I ended up using ethereum perpetual futures for this project because they had just launched on Coinbase and had a promo with extremely low fees.
-
-I wasn’t expecting an LLM to successfully predict price or anything magic, the experiment was more about whether it could reason when given good context and behave more like a discretionary trader than a fixed rule set.
 
 One constraint was that I built this while working around free ChatGPT API usage limits, which meant prompts had to stay concise and decision frequency had to be limited. Running on a 30 min interval was about as frequent as I could get while still keeping enough context and instructions in the prompt.
 

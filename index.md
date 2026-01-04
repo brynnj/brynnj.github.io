@@ -6,7 +6,7 @@ title: "Home"
 <div class="hero">
   <div class="hero-copy">
     <p class="lead">
-      Aerospace engineer focused on multibody dynamics, with a side interest in trading, learning new simulation tools and physics, and keeping up with modern tools so I don't get replaced.
+      Aerospace engineer focused on multibody dynamics, with a side interest in algorithmic trading, learning new simulation tools and physics, and keeping up with modern tools so I don't get replaced.
     </p>
   </div>
   <div class="hero-media" role="img" aria-label="Hero image placeholder"></div>
