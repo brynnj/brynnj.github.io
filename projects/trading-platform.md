@@ -57,7 +57,7 @@ For any new strategy, I can extend the base scanner class and plug it in.
 It's tough to use a scanner to go back in time and see what it would have picked on previous days, but it's probably worth the effort to build this functionality because this is a really important part of some strategies. For now, I just have it run every morning so I can build up a dataset as I go. I get a list like this each day, and built a pipeline to fetch the relevant data from Databento so I can then go test how the combined scanner + strategy would've done on that day. I also get a much richer set showing exactly why every candidate got filtered for debugging.
 
 **Example of scanner selections**  
-<img src="/assets/img/scan-selections.png" alt="Scanner selections" width="70%">
+<img src="/assets/img/scan-selections.png" alt="Scanner selections" style="max-width:70%; height:auto;">
 
 ---
 
