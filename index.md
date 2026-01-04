@@ -3,8 +3,6 @@ layout: default
 title: "Home"
 ---
 
-# James Brynn
-
 <div class="hero">
   <div class="hero-copy">
     <p class="lead">
@@ -14,20 +12,24 @@ title: "Home"
   <div class="hero-media" role="img" aria-label="Hero image placeholder"></div>
 </div>
 
-<section class="section">
+<section class="section" markdown="1">
 
 ## About Me
 
 I'm currently the Multibody Dynamics Lead at Relativity Space, focused on simulation and vehicle dynamics for the Terran R launch vehicle. I spend most of my time in modeling and analysis, doing my best to help support the fast development of good hardware. I focus on stage separation, fairing separation, fluid transient modeling, and landing leg deployment, and touchdown, and within the MBD team we also cover the dynamics of all transport and recovery ops.
 
+
 Back in college I learned how to design hardware on the Michigan Baja Racing team, working on drivetrain (primarily CVT).
+
 
 Outside of work I try to self-teach algorithmic trading, simulation, and applied ML. This portfolio is *not* a mechanical engineering or dynamics portfolio, just a collection of experiments and projects that don't fit on a resume. However, all of them have been very effective for learning about Python, software architecture, math, and new ways of thinking about risk and decision making. They've improved my engineering ability in some indirect ways I didn't expect.
 
+
 I keep this stuff in private repos for the most part, but I'm happy to talk about any of these if you have questions or you're willing to offer some advice. 
+
 </section>
 
-<section class="section">
+<section class="section" markdown="1">
 
 ## Background
 
