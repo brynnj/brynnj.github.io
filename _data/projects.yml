@@ -1,6 +1,6 @@
 # Set hidden: true to hide a project card from the Projects page.
 - title: "Algorithmic Trading Platform"
-  description: "Platform that I built for myself to do all strategy development, testing, and live execution"
+  description: "Platform I built for strategy development, testing, and live deployment"
   link: "/projects/trading-platform/"
   year: "2025"
   image: "/assets/img/monte-carlo-example.png"
@@ -24,7 +24,7 @@
   image: "/assets/img/sixdof-sim-viewer.png"
   hidden: true
 - title: "Regime Labeling Experiments"
-  description: "Exploring how to label current regimes for use in trading strategies"
+  description: "Exploring how to identify current regimes for use in trading strategies"
   link: "/projects/regime-classification/"
   year: "2025"
   image: "/assets/img/btc_labeled_cover.png"

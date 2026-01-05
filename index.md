@@ -25,7 +25,7 @@ Back in college I learned how to design hardware on the Michigan Baja Racing tea
 Outside of work I try to self-teach algorithmic trading, simulation, and applied ML. This portfolio is *not* a mechanical engineering or dynamics portfolio, just a collection of experiments and projects that don't fit on a resume. However, all of them have been very effective for learning about Python, software architecture, math, and new ways of thinking about risk and decision making. They've improved my engineering ability in some indirect ways I didn't expect.
 
 
-I keep this stuff in private repos for the most part, but I'm happy to talk about any of these if you have questions or you're willing to offer some advice. 
+I keep most of this in private repos, but I’m happy to talk about any of it if you have questions or are willing to offer some advice. 
 
 </section>
 
