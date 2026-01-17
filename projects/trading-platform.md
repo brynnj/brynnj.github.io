@@ -155,7 +155,7 @@ I model fills assuming I have to cross the spread on both ends.
 
 Lately the work has been around:
 - building better scanners
-- developing an actual strategy I want to take to live testing (Hving a promising strategy is the best motivation for actually getting myself to work on the tooling)
+- developing an actual strategy I want to take to live testing (Having a promising strategy is the best motivation for actually getting myself to work on the tooling)
 - dev to support multiple live data streams
 
 These are probably going to be the focus for a while, although I think I mostly have a scanner where I want it. If I can get my data feeds to a good spot and the strategy is promising, next up would be a bit of live paper trading with the integrated system, then working on the execution layer (which I actually think won't be too bad, other than controlling competing entries across multiple tickers) 
