@@ -132,9 +132,11 @@ Example stats for a strategy that may or may not be legit (still building a bigg
 
 ![Stats:](/assets/img/strategy-stats.png)
 
-Also in the interest of seeing robustness to missed entries and unexpected high-slippage events (I am trading very volatile stocks after all), I'll typically do a Monte Carlo eval on the trade history trades where slippage is dispersed, there's a chance of missing any given trade, and there's a chance of having an anomalous event where I pull from a much higher slippage distribution.
+Also in the interest of seeing robustness to missed entries and unexpected high-slippage events (I am trading very volatile stocks after all), I'll typically do a Monte Carlo eval on the trade history where slippage is dispersed, there's a chance of missing any given trade, and there's a chance of having an anomalous event where I pull from a much higher slippage distribution.
 
 The slippage and missed entry percents are loosely based on experience trading by hand, but are still made up, so surviving this test doesn't automatically make a strategy valid but it's useful as a sensitivity check.
+
+I model fills assuming I have to cross the spread on both ends.
 
 **Monte Carlo Example**
 ![Scanner:](/assets/img/monte-carlo-example.png)
