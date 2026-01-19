@@ -10,7 +10,7 @@ tags: [trading, python, asyncio, systems, market-structure]
 
 This is an end-to-end algorithmic trading platform I’ve been building for myself as a platform to experiment with faster (second-scale) trading strategies. I wanted something that could run live or replay historical data through a strategy without constantly making new scripts or pipelines for everything I wanted to test.
 
-Everything is in Python. I used pure numpy wherever possible but there's a lot of room for optimization, however, it doesn't make sense to put effort into that quite yet. I did mess around with some C++ bindings for some intensive indicator calcs, but haven't taken that very far yet.
+Everything is in Python. I used pure NumPy wherever possible, but there's a lot of room for optimization if I ever need it. I did mess around with C++ bindings for some intensive indicator calcs, but haven't taken that very far yet.
 
 ---
 
@@ -46,7 +46,7 @@ The "scanner" depends on what I'm doing, so far the options are just:
 
 For any new strategy, I can extend the base scanner class and plug it in.
 
-It's tough to backtest a scanner (seeing what it would have picked on previous days), but it's probably worth the effort to build this functionality because this is a really important part of some strategies. For now, I just have it run every morning so I can build up a dataset as I go. I get a list like the one below each day, and built a pipeline to fetch the relevant data from Databento so I can then go test how the combined scanner + strategy would've done on that day. I also get a much richer log showing exactly why every candidate stock got filtered for refining the scanner.
+It's tough to backtest a scanner (seeing what it would have picked on previous days) without good data sources, but it's probably worth the effort to build this functionality because this is a really important part of some strategies. For now, I just have it run every morning so I can build up a dataset as I go. I built a pipeline to fetch data for the stocks identified by the scanner from Databento, so I can then go test how the combined scanner + strategy would've done on that day. I generate a list like the one below, and I also get a much richer log showing exactly why every candidate stock got filtered for development purposes.
 
 **Example of scanner selections**  
 <img src="/assets/img/scan-selections.png" alt="Scanner selections" style="max-width:70%; height:auto;">
@@ -66,7 +66,7 @@ This structure lets a lot of symbols run concurrently. The central manager conce
 
 ### Market Data Streams
 
-I have different implementations for live WebSocket data and CSV replay emulating a WebSocket stream for backtests, but they share a base class so the state machines themselves don't care where they're getting data from. Data streams push bars into individual buffers of every strategy connected to them, so the strategies can independently handle the bars without blocking down each other or the data feed.
+I have different implementations for live WebSocket data and CSV replay emulating a WebSocket stream for backtests, but they share a base class so the state machines themselves don't care where they're getting data from. Data streams push bars into individual buffers of every strategy connected to them, so the strategies can independently handle the bars without blocking each other or the data feed.
 
 Everything gets normalized into the same bar and quote schema, so again the strategies don’t care where the data came from.
 
@@ -83,7 +83,7 @@ Each one:
 
 Indicators are also implemented with a standard interface and aren't dependent on internal strategy structure, which is important both for the state machines and the visualizer.
 
-Each strategy has an internal buffer for data. The data is tagged with a label (for example, a 1 min bar or quote) and the strategy will work through the buffer as long as it's not empty and call the relevant handlers depending on the tag.
+Each strategy has an internal buffer for data. The data is tagged with a label (for example, a 1 minute bar or quote) and the strategy will work through the buffer as long as it's not empty and call the relevant handlers depending on the tag.
 
 ---
 
@@ -101,7 +101,7 @@ There’s a PyQtGraph-based charting utility that shows:
 - a running price feed, typically NBBO quotes
 - a log, which usually will include log outputs from a strategy that's running
 
-It’s mostly a debug tool but it's also just fun to watch it run with a strategy. When doing larger scale backtests or just iterating on a strategy I can disable the visualizer, since it’s the bottleneck in terms of playback speed, often by roughly two orders of magnitude. However, this also depends on whether or not the strategy is implemented efficiently and how much it tries to use quotes vs just the much less frequent bars - in the example below the 1 minute bars have some heavy logic so the visualizer isn't actually the bottleneck.
+It’s mostly a debug tool but it's also just fun to watch it run with a strategy. When doing larger scale backtests or just iterating on a strategy I can disable the visualizer, since it’s the bottleneck in terms of playback speed, often by roughly two orders of magnitude. However, this also depends on whether or not the strategy is implemented efficiently and how much it tries to use quotes vs just the much less frequent bars - in the example below, the 1 minute bars have some heavy logic so the visualizer isn't actually the bottleneck.
 
 **Visualizer Example**
 <video controls preload="metadata" width="100%">
@@ -128,7 +128,7 @@ Any strategy can be run individually with historical data as a test, but I also 
 - do some post-processing (for example, applying slippage and fees since my current dummy execution layer doesn't model them)
 - put together some stats
 
-Example stats for a strategy that may or may not be legit (still building a bigger dataset to test "out-of-sample"):
+Example stats for a strategy concept (which I later ruled out when I had a better out-of-sample dataset):
 
 ![Stats:](/assets/img/strategy-stats.png)
 
@@ -147,7 +147,7 @@ I model fills assuming I have to cross the spread on both ends.
 
 - Data availability and rate limits depend heavily on provider, and I'm trying to work with as much free data as possible so I'm fairly handicapped on actual strategy development and backtesting.
 - Python limits how far latency-sensitive ideas can go, but a port to C++ wouldn't be too difficult where needed.
-- Multi-ticker live testing with actual WebSocket connections from Polygon(Massive) is still not quite working as expected, I'm actively debugging this and learning about the right way to build cooperative async systems. 
+- Multi-ticker live testing with live WebSocket connections from Polygon (Massive now) is still not quite working as expected. I'm actively debugging this and learning about the right way to build cooperative async systems. 
 
 ---
 
@@ -158,6 +158,6 @@ Lately the work has been around:
 - developing an actual strategy I want to take to live testing (Having a promising strategy is the best motivation for actually getting myself to work on the tooling)
 - dev to support multiple live data streams
 
-These are probably going to be the focus for a while, although I think I mostly have a scanner where I want it. If I can get my data feeds to a good spot and the strategy is promising, next up would be a bit of live paper trading with the integrated system, then working on the execution layer (which I actually think won't be too bad, other than controlling competing entries across multiple tickers) 
+These are probably going to be the focus for a while, although I think I mostly have a scanner where I want it. If I can get my data feeds to a good spot and the strategy is promising, next up would be a bit of live paper trading with the integrated system. After that would be the execution layer (which I actually think won't be too bad, other than controlling competing entries across multiple tickers).
 
 

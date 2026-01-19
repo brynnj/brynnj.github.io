@@ -18,7 +18,7 @@ For regime labeling I used the Amplitude-Based Labeler from Jonathan Shore's `ts
 
 (As an aside, all of the content on tr8dr has been very inspiring. The possibility of starting from a good labeler to build a predictive model came from https://tr8dr.github.io/RLp1/)
 
-This labeler identifies three states, generally uptrend downtrend and flat. The labels are forward-looking, they're not meant to be traded directly, but I'm using them as a truth label in my training data.
+This labeler identifies three states, uptrend, downtrend, and flat. The labels are forward-looking, they're not meant to be traded directly, but I'm using them as a ground truth label in my training data.
 - `+1` for upward regimes,
 - `-1` for downward regimes,
 - `0` for neutral / choppy periods.
@@ -27,7 +27,7 @@ Example of labeled data:
 
 ![Example of labeled data:](/assets/img/btc_labeled.png)
 
-As a simple assessment of the validity of the regime label, the 24 bar forward returns of the labeled dataset show significant predictive power (this is forward looking though of course). I also checked against other horizons, and as expected shorter horizons do better.
+As a simple assessment of the validity of the regime label, the 24 bar forward returns of the labeled dataset are consistent with the labels. I also checked against other horizons, and as expected shorter horizons do better.
 
 ```shell
 H=24 bars
@@ -48,7 +48,7 @@ from_1   0.0308  0.0531  0.9162
 ```
 ---
 
-The goal is then to train a classifier to label the current regime as accurately as possible, without future information, so that it could be used in an actual strategy. IThe model outputs a probability distribution across all three states at each timestep. These can be used as-is or combined into a single trend score metric evaluating the confidence of the label being +1 or -1 instead of 0.
+The goal is then to train a classifier to label the current regime as accurately as possible, without future information, so that it could be used in an actual strategy. The model outputs a probability distribution across all three states at each timestep. These can be used as-is or combined into a single trend score metric evaluating the confidence of the label being +1 or -1 instead of 0.
 
 ---
 
@@ -144,13 +144,13 @@ I then tried putting a sign back in to see if the model has any meaningful predi
 
 ![Binned mean fwd return vs signed trend score](/assets/img/binned_mean_fwd_ret_vs_signed_trend.png)
 
-Pretty promising with fixed-size bins (~2500 samples each) , but looking only at fixed bins surprisingly adds quite a bit of noise instead of a cleaner signal at the extremes like I expected:
+Pretty promising with fixed-size bins (~2500 samples each), but looking only at fixed bins surprisingly adds quite a bit of noise instead of a cleaner signal at the extremes like I expected:
 
 ![Binned mean fwd return vs signed trend score (fixed bins)](/assets/img/binned_mean_fwd_ret_vs_signed_trend_fixed_bins.png)
 
 Overall, this regime prediction method seems more effective as a volatility signal than a directional indicator. Directional signal seems like it might exist, but it's pretty weak and sensitive to how it's sliced.
 
-That suggests this is might be more useful as context or a feature in a broader model than as a primary
+That suggests this might be more useful as context or a feature in a broader model than as a primary
 decision maker for which strategy to use or as an entry filter.
 
 ---
@@ -168,4 +168,4 @@ Some possible uses that seem consistent with the behavior above:
 
 ## Next Steps
 
-I really barely scratched the surface of the predictive model - this was my first try at feature set, model selection, training approach, etc. and I might be able to do significantly better if I work more at this (especially including features that aren't just price and volume action, news and sentiment would probably go a long way). I first want to see if I can find an application for this in a metalabeler or otherwise, and if so I may revisit this to see how far I can push it.
+I really barely scratched the surface of the predictive model - this was my first try at a feature set, model selection, training approach, etc. and I might be able to do significantly better if I work more at this (especially including features that aren't just price and volume action, news and sentiment would probably go a long way). I first want to see if I can find an application for this in a metalabeler or otherwise, and if so I may revisit this to see how far I can push it.

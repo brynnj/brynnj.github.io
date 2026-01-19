@@ -1,5 +1,5 @@
 ---
-title: "AI Trader: LLM-Driven ETH Perps"
+title: "AI Trader: LLM-Driven ETH Perpetual Futures"
 layout: project
 tags: [trading, llm, crypto, python, automation]
 ---
@@ -68,9 +68,9 @@ If anything fails validation, the cycle is skipped.
 
 ## Execution
 
-Execution runs through a broker abstraction so the same logic supports paper trading and live trading though an exchange. Order placement, position tracking, and exits are handled outside the LLM loop after validation.
+Execution runs through a broker abstraction so the same logic supports paper trading and live trading through an exchange. Order placement, position tracking, and exits are handled outside the LLM loop after validation.
 
-All of this was deployed on an AWS EC2 instance that I spun up for myself a year ago. I have a framework reasonably well abstracted for strategies like this that run at scheduled intervals, so this shared a good chunk of code with the min variance deployment on Alpaca.
+All of this was deployed on an AWS EC2 instance that I spun up for myself a year ago. I have a framework reasonably well abstracted for strategies like this that run at scheduled intervals, so this shared a good chunk of code with the minimum variance project on Alpaca.
 
 (I also built a super simple dashboard for these strategies, but I haven't really taken that anywhere yet)
 
@@ -87,15 +87,15 @@ Since I switched to live trading, ETH has been coming back down. There were stil
 **Trade timeline and equity curve for real-money testing**
 ![Equity curve](/assets/img/ai_trader_equity_curve.png)
 
-Over the full tested period, it did outperform holding ETH outright and stayed out of major downtrends. I would like to leave it on until ETH sees a sizeable move upwards again and I get to see it performing in the regime it was built for, but I can't really wait out the drawdown, so for now I've disabled it. The focus needs to be on a way to backtest this if I want to try any more with it.
+Over the full tested period, it did outperform holding ETH outright and stayed out of major downtrends. I would like to leave it live until ETH sees a sizeable move upwards again and I get to see it performing in the regime it was built for, but I can't really wait out the drawdown, so for now I've moved back to paper trading. The focus needs to be on a way to backtest this if I want to try any more with it live, to characterize the risk properly.
 
 ---
 
 ## Takeaways So Far
 
-In general, it doesn't do as well as I'd hope at bringing in broader market trends and sentiment. I think this is the result of bad features more than anything, but I'd like it to have a better understanding of risk-on vs risk-off sentiment and tie that to it's assessment of whether or not a breakout is likely to continue.
+In general, it doesn't do as well as I'd hope at bringing in broader market trends and sentiment. I think this is the result of bad features more than anything, but I'd like it to have a better understanding of risk-on vs risk-off sentiment and tie that to its assessment of whether or not a breakout is likely to continue.
 
-One thing I haven’t implemented yet but would like to try is feeding recent trade performance back into the snapshot in a very compact form. Even minimal self-feedback might help the system adjust across regimes. Also, some notion of sentiment (going beyond just news) could go a long way - when I started this I was using cryptopanic and had a significantly richer feature set, but they upped prices significantly and so I moved away from that.
+One thing I haven’t implemented yet but would like to try is feeding recent trade performance back into the snapshot in a very compact form. Even minimal self-feedback might help the system adjust across regimes. Also, some notion of sentiment (going beyond just news) could go a long way - when I started this I was using CryptoPanic and had a significantly richer feature set, but they upped prices significantly and so I moved away from that.
 
 Unsurprisingly, not being able to backtest is a huge handicap, every change is a guess and I only get to see performance in whatever market exists now.
 

@@ -6,7 +6,7 @@ tags: [trading, portfolio, optimization, python]
 
 ## Overview
 
-This project is an attempt to build a portfolio with differently correlated assets, with a few designated growth vehicles and some hedge / flat-market protection, while maintaining the best returns possible.
+This project is an attempt to build a portfolio with differently correlated assets, with a few designated growth vehicles and some hedge / flat market protection, while maintaining the best returns possible.
 
 The goal is to build a portfolio with decent returns but low drawdowns, so it becomes feasible to apply higher leverage without taking on the same tail risk, hopefully achieving higher risk-adjusted returns as a result.
 
@@ -50,11 +50,11 @@ I ended up swapping out/removing some assets, and shifted the optimization objec
 The strategy runs on a weekly rebalance cycle and produces target portfolio weights by solving a constrained optimization problem on downside variance.
 
 At a high level:
-1. Pull historical data for the each asset (caching the data, so the actual pulls are only the missing parts which ends up being the most recent week).
+1. Fetch historical data for each asset. I cache data, so the actual requests are only for the missing days.
 2. Compute daily returns and clean obvious data issues.
 3. Solve a constrained optimization problem to determine target weights.
 4. Reconcile current positions against those targets (how much to buy and sell of each).
-5. Submit trades via Alpaca (paper for now). In practice I'd optimize tax lots for rebalancing, but Alpaca doesn't support that and I'm just paper trading so I haven't implement that yet.
+5. Submit trades via Alpaca (paper for now). In practice I'd optimize tax-lot selection for rebalancing, but Alpaca doesn't support that and I'm just paper trading so I haven't implemented that yet.
 
 ---
 
@@ -102,7 +102,7 @@ A few high-level observations:
 - Live behavior has stayed within the family of backtest outcomes, despite some differences in constraint logic.
 - The portfolio underperformed just the growth assets, but that is to be expected (especially given their extremely strong individual performances recently) and the drawdown was materially better.
 
-You’ll notice the rolling window optimization isn’t doing much in the way of dynamically changing weights. Within the limits set on risk-on vs hedging asset classes, it tends to pick fairly constant ratios aside from a few events. As mentioned above, this could probably be implemented as a fixed-weight portfolio.
+You’ll notice the rolling window optimization isn’t doing much in the way of dynamically changing weights. Within the limits set on risk-on vs. hedging asset classes, it tends to pick fairly constant ratios aside from a few events. As mentioned above, this could probably be implemented as a fixed-weight portfolio.
 
 **Rolling portfolio weights in live testing**  
 ![Weights:](/assets/img/weight-allocations.png)
@@ -113,11 +113,11 @@ You’ll notice the rolling window optimization isn’t doing much in the way of
 **Drawdown in live testing**  
 ![Live test drawdown:](/assets/img/drawdown_live.png)
 
-The unusual relationship between tech and gold recently (both growing astronomically) led to more correlation and a higher drawdown than I’d like in recent months, but still in-family relative to backtesting.
+The unusual relationship between tech and gold recently (both performing well simultaneously) led to more correlation and a higher drawdown than I’d like in recent months, but still in-family relative to backtesting.
 
-As for backtests, I got rate-limited by yfinance after pulling too much data in a single day and need to fix my backtesting pipeline to use a different source. I do have an example below with generally similar allocations over time, although with much looser bounds (you’ll see much wider swings in allocations).
+As for backtests, I got rate-limited by yfinance after pulling too much data in a single day (for a different project) and need to fix my backtesting pipeline to use a different source. I do have an example below with generally similar allocations over time, although with much looser bounds (you’ll see much wider swings in allocations).
 
-I also included a rough tax model of ~10% annual tax on gains, but I haven’t yet determined the correct realized tax burden. The cumulative value shown does **not** have taxes subtracted, but the cumulative value is also shown on chart. As noted above in the correlation matrix, the backtests use EDZ, but I substituted RWM for live testing. 
+I also included a rough tax model of ~10% annual tax on gains, but I haven’t yet modeled the correct realized tax burden. The cumulative value shown does **not** have taxes subtracted, but taxes are shown on the chart. As noted above in the correlation matrix, the backtests use EDZ, but I substituted RWM for live testing. 
 
 **Rolling portfolio weights in backtesting**  
 ![Backtest Weights:](/assets/img/allocations-backtest.png)
@@ -125,7 +125,7 @@ I also included a rough tax model of ~10% annual tax on gains, but I haven’t y
 **Portfolio equity curve in backtesting**  
 ![Backtest Performance:](/assets/img/risk-parity-performance-backtest.png)
 
-Drawdowns reached around 12%, higher than anything seen so far in live. I do think the backtest is very optimistic for performance in 2022 and 2023, I think the combination of EDZ with tech did well for no real structural reason. I'd expect drawdowns closer to probably 20-30% over a sustained downtrend like that, but need to backtest with RWM.
+Drawdowns reached around 12%, higher than anything seen so far in live. I do think the backtest is very optimistic for performance in 2022 and 2023; I think the combination of EDZ with tech did well for no real structural reason. I'd expect drawdowns closer to probably 20-30% over a sustained downtrend like that, but need to backtest with RWM.
 
 **Drawdown in backtesting**  
 ![Backtest Drawdown:](/assets/img/drawdowns-backtest.png)
@@ -147,13 +147,13 @@ Drawdowns reached around 12%, higher than anything seen so far in live. I do thi
    The current setup relied too heavily on yfinance, and I was restricted after pulling too much data on a different project. I need to port this to a more robust data provider. 
    
 2. **Study the optimization problem more** 
-   I also want to explicitly test this optimization problem against others — the original version of this project was risk parity, which is what the backtest shown uses, and I’d like to see whether that actually performed better over the live testing period. I also need to test explicitly with the RWM substitution for EDZ.
+   I also want to explore other optimization objectives — the original version of this project was risk parity, which is what the backtest shown above uses, and I’d like to see whether that actually performed better over the live testing period. I also need to test explicitly with the RWM substitution for EDZ.
 
-2. **Experiment with synthetic assets**  
+3. **Experiment with synthetic assets**  
    It would be interesting to generate synthetic assets (i.e. a custom strategy) with controlled correlation to my main growth drivers to see if I can improve returns in the orthogonal or hedging assets. For example, a short-focused strategy even with flat or slightly negative returns would be inversely correlated to the market and might fill a good role here.
 
-3. **Model taxes explicitly in backtests**  
+4. **Model taxes explicitly in backtests**  
    Weekly rebalancing requires selling, and it’s not yet clear how much tax drag this introduces. It should be much less than taxing all gains with correct lot management, but still nonzero. Properly modeling realized gains and tax treatment is necessary to understand net performance.
 
-4. **Optimize leverage and test with margin costs**  
+5. **Optimize leverage and test with margin costs**  
    This would better reflect how the strategy would actually be deployed. I’d like to try applying the Kelly criterion here and see whether it produces a better optimal return than SPY or other baselines using this structure.
